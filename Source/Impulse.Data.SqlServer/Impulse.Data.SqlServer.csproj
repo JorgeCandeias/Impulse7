@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AssemblyName>Impulse.Data.SqlServer</AssemblyName>
+		<RootNamespace>Impulse.Data.SqlServer</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Impulse.Data.Abstractions\Impulse.Data.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>

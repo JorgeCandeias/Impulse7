@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AssemblyName>Impulse.WebApp</AssemblyName>
+		<RootNamespace>Impulse.WebApp</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Impulse.Grains.Abstractions\Impulse.Grains.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>

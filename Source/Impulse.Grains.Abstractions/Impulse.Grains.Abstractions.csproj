@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AssemblyName>Impulse.Grains.Abstractions</AssemblyName>
+		<RootNamespace>Impulse.Grains</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Impulse.Core.Abstractions\Impulse.Core.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>
