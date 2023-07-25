@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{a44fd354-de82-4839-8768-efa1c62abc64}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql150DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -22,6 +22,9 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DelayedDurability>DISABLED</DelayedDurability>
+    <AllowSnapshotIsolation>True</AllowSnapshotIsolation>
+    <ReadCommittedSnapshot>True</ReadCommittedSnapshot>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -57,5 +60,36 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="Tables" />
+    <Folder Include="Scripts" />
+    <Folder Include="Stored Procedures" />
+    <Folder Include="Sequences" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\OrleansMembershipTable.sql" />
+    <Build Include="Tables\OrleansMembershipVersionTable.sql" />
+    <Build Include="Tables\OrleansStorage.sql" />
+    <Build Include="Tables\OrleansRemindersTable.sql" />
+    <Build Include="Tables\OrleansQuery.sql" />
+    <Build Include="Tables\ChatUser.sql" />
+    <Build Include="Tables\ChatRoom.sql" />
+    <Build Include="Tables\ChatMessage.sql" />
+    <Build Include="Sequences\ChatRoomId.sql" />
+    <Build Include="Sequences\ChatUserId.sql" />
+    <Build Include="Sequences\ChatMessageId.sql" />
+    <Build Include="Stored Procedures\GetOrAddChatRoomId.sql" />
+    <Build Include="Stored Procedures\AddMessage.sql" />
+    <Build Include="Stored Procedures\GetOrAddChatUserId.sql" />
+    <Build Include="Stored Procedures\GetMessage.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\Script.PostDeployment.Orleans.Clustering.sql" />
+    <None Include="Scripts\Script.PostDeployment.Orleans.sql" />
+    <None Include="Scripts\Script.PostDeployment.Orleans.Persistence.sql" />
+    <None Include="Scripts\Script.PostDeployment.Orleans.Reminders.sql" />
+    <None Include="Impulse.Data.SqlServer.Database.publish.xml" />
   </ItemGroup>
 </Project>

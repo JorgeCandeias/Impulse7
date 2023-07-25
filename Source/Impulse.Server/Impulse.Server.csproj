@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Orleans.Server" Version="7.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Impulse.Grains\Impulse.Grains.csproj" />
   </ItemGroup>
 

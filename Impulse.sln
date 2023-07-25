@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.WebApp", "Source\Im
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Impulse.Data.SqlServer.Database", "Source\Impulse.Data.SqlServer.Database\Impulse.Data.SqlServer.Database.sqlproj", "{A44FD354-DE82-4839-8768-EFA1C62ABC64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Console", "Source\Impulse.Console\Impulse.Console.csproj", "{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{A44FD354-DE82-4839-8768-EFA1C62ABC64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A44FD354-DE82-4839-8768-EFA1C62ABC64}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A44FD354-DE82-4839-8768-EFA1C62ABC64}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

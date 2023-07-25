@@ -9,6 +9,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Microsoft.Orleans.Sdk" Version="7.1.2" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\Impulse.Core.Abstractions\Impulse.Core.Abstractions.csproj" />
 	</ItemGroup>
 

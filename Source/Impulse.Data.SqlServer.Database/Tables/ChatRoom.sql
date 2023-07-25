@@ -1,0 +1,16 @@
+﻿CREATE TABLE [dbo].[ChatRoom]
+(
+	[Id] INT NOT NULL,
+	[Name] NVARCHAR(100) NOT NULL,
+
+	CONSTRAINT [PK_ChatRoom] PRIMARY KEY CLUSTERED
+	(
+		[Id]
+	),
+
+	CONSTRAINT [UK_ChatRoom_Name] UNIQUE NONCLUSTERED
+	(
+		[Name]
+	)
+)
+GO

@@ -9,6 +9,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.2.0" />
+	  <PackageReference Include="Dapper" Version="2.0.143" />
+	  <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
+	  <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\Impulse.Data.Abstractions\Impulse.Data.Abstractions.csproj" />
 	</ItemGroup>
 

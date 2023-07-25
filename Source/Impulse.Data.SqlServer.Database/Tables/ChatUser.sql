@@ -1,0 +1,16 @@
+﻿CREATE TABLE [dbo].[ChatUser]
+(
+	[Id] INT NOT NULL,
+	[Name] NVARCHAR(100) NOT NULL,
+
+	CONSTRAINT [PK_ChatUser] PRIMARY KEY CLUSTERED
+	(
+		[Id]
+	),
+
+	CONSTRAINT [UK_ChatUser_Name] UNIQUE NONCLUSTERED
+	(
+		[Name]
+	)
+)
+GO
