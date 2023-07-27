@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{a44fd354-de82-4839-8768-efa1c62abc64}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql150DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -74,13 +74,15 @@
     <Build Include="Tables\ChatUser.sql" />
     <Build Include="Tables\ChatRoom.sql" />
     <Build Include="Tables\ChatMessage.sql" />
-    <Build Include="Sequences\ChatRoomId.sql" />
-    <Build Include="Sequences\ChatUserId.sql" />
-    <Build Include="Sequences\ChatMessageId.sql" />
     <Build Include="Stored Procedures\GetOrAddChatRoomId.sql" />
     <Build Include="Stored Procedures\AddMessage.sql" />
     <Build Include="Stored Procedures\GetOrAddChatUserId.sql" />
-    <Build Include="Stored Procedures\GetMessage.sql" />
+    <Build Include="Stored Procedures\GetLatestChatMessagesByChatRoomName.sql" />
+    <Build Include="Stored Procedures\GetMessageById.sql" />
+    <Build Include="Stored Procedures\GetOrAddChatRoom.sql" />
+    <Build Include="Stored Procedures\GetAllChatRooms.sql" />
+    <Build Include="Stored Procedures\GetOrAddChatUser.sql" />
+    <Build Include="Stored Procedures\GetAllChatUsers.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />

@@ -3,27 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Core.Abstractions", "Source\Impulse.Core.Abstractions\Impulse.Core.Abstractions.csproj", "{8297DF60-DB57-43D2-BD67-3FA5CB7B583E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.Core.Abstractions", "Source\Impulse.Core.Abstractions\Impulse.Core.Abstractions.csproj", "{8297DF60-DB57-43D2-BD67-3FA5CB7B583E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Core", "Source\Impulse.Core\Impulse.Core.csproj", "{41C355C3-56A6-43AB-A723-1B1D9C4A4778}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.Core", "Source\Impulse.Core\Impulse.Core.csproj", "{41C355C3-56A6-43AB-A723-1B1D9C4A4778}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Data.Abstractions", "Source\Impulse.Data.Abstractions\Impulse.Data.Abstractions.csproj", "{34CCFF7F-327A-4207-83B4-4A5357ECA047}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.Data.Abstractions", "Source\Impulse.Data.Abstractions\Impulse.Data.Abstractions.csproj", "{34CCFF7F-327A-4207-83B4-4A5357ECA047}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Data.SqlServer", "Source\Impulse.Data.SqlServer\Impulse.Data.SqlServer.csproj", "{9269CDCA-C68A-4C95-8BAC-B182C6F55D03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.Data.SqlServer", "Source\Impulse.Data.SqlServer\Impulse.Data.SqlServer.csproj", "{9269CDCA-C68A-4C95-8BAC-B182C6F55D03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Grains.Abstractions", "Source\Impulse.Grains.Abstractions\Impulse.Grains.Abstractions.csproj", "{4BE6E6FD-9B7D-4A90-AABC-F927552E7794}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.Grains.Abstractions", "Source\Impulse.Grains.Abstractions\Impulse.Grains.Abstractions.csproj", "{4BE6E6FD-9B7D-4A90-AABC-F927552E7794}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Grains", "Source\Impulse.Grains\Impulse.Grains.csproj", "{768F5C95-3427-43F4-B39C-E7AD52B125C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.Grains", "Source\Impulse.Grains\Impulse.Grains.csproj", "{768F5C95-3427-43F4-B39C-E7AD52B125C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Server", "Source\Impulse.Server\Impulse.Server.csproj", "{ACD33A3F-7D68-4168-96AB-3674AEE87E94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.Server", "Source\Impulse.Server\Impulse.Server.csproj", "{ACD33A3F-7D68-4168-96AB-3674AEE87E94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.WebApi", "Source\Impulse.WebApi\Impulse.WebApi.csproj", "{7865E078-FF7A-455E-93BC-100D99D9888E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.WebApi", "Source\Impulse.WebApi\Impulse.WebApi.csproj", "{7865E078-FF7A-455E-93BC-100D99D9888E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.WebApp", "Source\Impulse.WebApp\Impulse.WebApp.csproj", "{0605A723-5419-432D-AF4D-6B2F62BB2CA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.WebApp", "Source\Impulse.WebApp\Impulse.WebApp.csproj", "{0605A723-5419-432D-AF4D-6B2F62BB2CA3}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Impulse.Data.SqlServer.Database", "Source\Impulse.Data.SqlServer.Database\Impulse.Data.SqlServer.Database.sqlproj", "{A44FD354-DE82-4839-8768-EFA1C62ABC64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Console", "Source\Impulse.Console\Impulse.Console.csproj", "{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.Console", "Source\Impulse.Console\Impulse.Console.csproj", "{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{73A0CA27-3B37-480A-A322-9606C82A03F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Data.SqlServer.Tests", "Tests\Impulse.Data.SqlServer.Tests\Impulse.Data.SqlServer.Tests.csproj", "{C340928D-6C5E-407A-950B-F9940E70D8EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,9 +81,16 @@ Global
 		{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C340928D-6C5E-407A-950B-F9940E70D8EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C340928D-6C5E-407A-950B-F9940E70D8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C340928D-6C5E-407A-950B-F9940E70D8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C340928D-6C5E-407A-950B-F9940E70D8EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C340928D-6C5E-407A-950B-F9940E70D8EE} = {73A0CA27-3B37-480A-A322-9606C82A03F7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD6CBA79-5192-4A13-BF3A-BB345DABCFC8}

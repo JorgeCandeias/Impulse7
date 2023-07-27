@@ -1,16 +1,21 @@
-﻿using CommunityToolkit.Diagnostics;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Impulse.Data.SqlServer.Models;
+using Impulse.Data.SqlServer.Repositories;
 
 namespace Impulse.Data.SqlServer;
 
 public static class SqlRepositoryServiceCollectionExtensions
 {
-    public static IServiceCollection AddSqlRepository(this IServiceCollection services, Action<SqlRepositoryOptions> configure)
+    public static IServiceCollection AddSqlRepositories(this IServiceCollection services, Action<SqlRepositoryOptions> configure)
     {
         Guard.IsNotNull(services);
 
         return services
-            .AddSingleton<IChatRepository, SqlChatRepository>()
+            .AddSingleton<IChatRoomRepository, SqlChatRoomRepository>()
+            .AddSingleton<IChatUserRepository, SqlChatUserRepository>()
+            .AddAutoMapper(config =>
+            {
+                config.AddProfile<SqlRepositoryProfile>();
+            })
             .AddOptions<SqlRepositoryOptions>()
             .Configure(configure)
             .ValidateDataAnnotations()

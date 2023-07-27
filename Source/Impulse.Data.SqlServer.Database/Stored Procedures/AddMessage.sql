@@ -1,36 +1,40 @@
 ﻿CREATE PROCEDURE [dbo].[AddMessage]
-	@ChatRoomName NVARCHAR(100),
-	@ChatUserName NVARCHAR(100),
+	@Guid UNIQUEIDENTIFIER,
+	@Room NVARCHAR(100),
+	@User NVARCHAR(100),
 	@Text NVARCHAR(1000),
 	@Created DATETIMEOFFSET
 AS
 
 DECLARE @ChatRoomId INT;
-EXECUTE [dbo].[GetOrAddChatRoomId] @ChatRoomName, @ChatRoomId OUTPUT;
+EXECUTE [dbo].[GetOrAddChatRoomId] @Room, @ChatRoomId OUTPUT;
 
 DECLARE @ChatUserId INT;
-EXECUTE [dbo].[GetOrAddChatUserId] @ChatUserName, @ChatUserId OUTPUT;
+EXECUTE [dbo].[GetOrAddChatUserId] @User, @ChatUserId OUTPUT;
 
-DECLARE @Id INT = NEXT VALUE FOR [ChatMessageId];
+DECLARE @Output TABLE ([Id] INT);
 
 INSERT INTO [dbo].[ChatMessage]
 (
-	[Id],
 	[ChatRoomId],
 	[ChatUserId],
 	[Text],
 	[Created]
 )
+OUTPUT
+	[Inserted].[Id]
+INTO
+	@Output
 VALUES
 (
-	@Id,
 	@ChatRoomId,
 	@ChatUserId,
 	@Text,
 	@Created
 );
 
-EXECUTE [dbo].[GetMessage] @Id = @Id;
+DECLARE @Id INT = (SELECT [Id] FROM @Output);
+EXECUTE [dbo].[GetMessageById] @Id;
 
 RETURN 0
 GO
