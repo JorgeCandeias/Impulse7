@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[GetAllChatRooms]
+﻿CREATE PROCEDURE [dbo].[TryGetChatRoomByName]
+	@Name NVARCHAR(100)
 AS
 
 SELECT
@@ -10,5 +11,7 @@ SELECT
 	[ETag]
 FROM
 	[dbo].[ChatRoom]
+WHERE
+	[Name] = @Name
 
 GO

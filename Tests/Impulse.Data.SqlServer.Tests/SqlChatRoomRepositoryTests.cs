@@ -1,3 +1,4 @@
+using Impulse.Core;
 using System.Transactions;
 
 namespace Impulse.Data.SqlServer.Tests;
@@ -14,83 +15,81 @@ public class SqlChatRoomRepositoryTests
 
     [Fact]
     [Trait("Category", "Database")]
-    public async Task GetsOrAddsChatRoom()
+    public async Task SavesNewChatRoom()
     {
-        // arrange
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-        var name1 = Guid.NewGuid().ToString();
-        var name2 = Guid.NewGuid().ToString();
-        var name3 = Guid.NewGuid().ToString();
+
+        // arrange
+        var service = _fixture.TestHost.Services.GetRequiredService<IChatRoomRepository>();
+        var guid = Guid.NewGuid();
+        var name = Guid.NewGuid().ToString();
+        var room = new ChatRoom(guid, name, DateTimeOffset.MinValue, DateTimeOffset.MinValue, Guid.Empty);
 
         // act
-        var service = _fixture.TestHost.Services.GetRequiredService<IChatRoomRepository>();
-        var start = DateTimeOffset.UtcNow.AddSeconds(-1);
-        var result1 = await service.GetOrAdd(name1);
-        var result2 = await service.GetOrAdd(name1);
-        var result3 = await service.GetOrAdd(name2);
-        var result4 = await service.GetOrAdd(name2);
-        var result5 = await service.GetOrAdd(name3);
-        var end = DateTimeOffset.UtcNow.AddSeconds(1);
+        var saved = await service.Save(room);
+        var read1 = await service.TryGetByGuid(guid);
+        var read2 = await service.TryGetByName(name);
+        var all = await service.GetAll();
 
-        // assert - result 1
-        Assert.NotNull(result1);
-        Assert.Equal(name1, result1.Name);
-        Assert.True(result1.Created >= start);
-        Assert.True(result1.Created <= end);
+        // assert - saved
+        Assert.NotNull(saved);
+        Assert.Equal(room.Guid, saved.Guid);
+        Assert.Equal(room.Name, saved.Name);
+        Assert.NotEqual(room.Created, saved.Created);
+        Assert.NotEqual(room.Updated, saved.Updated);
+        Assert.NotEqual(room.ETag, saved.ETag);
 
-        // assert - result 2
-        Assert.NotNull(result2);
-        Assert.Equal(result2.Name, result1.Name);
-        Assert.Equal(result1.Created, result2.Created);
+        // assert - read by guid
+        Assert.Equal(saved, read1);
 
-        // assert - result 3
-        Assert.NotNull(result3);
-        Assert.Equal(name2, result3.Name);
-        Assert.True(result3.Created >= start);
-        Assert.True(result3.Created <= end);
-        Assert.True(result3.Created > result2.Created);
+        // assert - read by name
+        Assert.Equal(saved, read2);
 
-        // assert - result 4
-        Assert.NotNull(result4);
-        Assert.Equal(result3.Name, result4.Name);
-        Assert.Equal(result3.Created, result3.Created);
-
-        // assert - result 5
-        Assert.NotNull(result5);
-        Assert.Equal(name3, result5.Name);
-        Assert.True(result5.Created >= start);
-        Assert.True(result5.Created <= end);
-        Assert.True(result5.Created > result4.Created);
+        // assert - all
+        Assert.NotNull(all);
+        Assert.Contains(read1, all);
+        Assert.Contains(read2, all);
     }
 
     [Fact]
     [Trait("Category", "Database")]
-    public async Task GetsAll()
+    public async Task UpdatesChatRoom()
     {
-        // arrange
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-        var name1 = Guid.NewGuid().ToString();
-        var name2 = Guid.NewGuid().ToString();
-        var name3 = Guid.NewGuid().ToString();
+
+        // arrange
+        var service = _fixture.TestHost.Services.GetRequiredService<IChatRoomRepository>();
+        var guid = Guid.NewGuid();
+        var name = Guid.NewGuid().ToString();
+        var rename = Guid.NewGuid().ToString();
+        var existing = await service.Save(new ChatRoom(guid, name, DateTimeOffset.MinValue, DateTimeOffset.MinValue, Guid.Empty));
 
         // act
-        var service = _fixture.TestHost.Services.GetRequiredService<IChatRoomRepository>();
-        var start = DateTimeOffset.UtcNow.AddSeconds(-1);
-        var result1 = await service.GetOrAdd(name1);
-        var result2 = await service.GetOrAdd(name1);
-        var result3 = await service.GetOrAdd(name2);
-        var result4 = await service.GetOrAdd(name2);
-        var result5 = await service.GetOrAdd(name3);
-        var end = DateTimeOffset.UtcNow.AddSeconds(1);
+        var saved = await service.Save(existing with { Name = rename });
+        var read1 = await service.TryGetByGuid(guid);
+        var read2 = await service.TryGetByName(name);
+        var read3 = await service.TryGetByName(rename);
         var all = await service.GetAll();
 
-        // assert
-        Assert.NotNull(all);
+        // assert - saved
+        Assert.NotNull(saved);
+        Assert.Equal(guid, saved.Guid);
+        Assert.Equal(rename, saved.Name);
+        Assert.Equal(existing.Created, saved.Created);
+        Assert.NotEqual(existing.Updated, saved.Updated);
+        Assert.NotEqual(existing.ETag, saved.ETag);
 
-        var list = all.ToList();
-        Assert.Equal(3, list.Count);
-        Assert.Contains(list, x => x.Name == name1 && x.Created >= start && x.Created <= end);
-        Assert.Contains(list, x => x.Name == name2 && x.Created >= start && x.Created <= end);
-        Assert.Contains(list, x => x.Name == name3 && x.Created >= start && x.Created <= end);
+        // assert - read by guid
+        Assert.Equal(saved, read1);
+
+        // assert - read by name
+        Assert.Null(read2);
+
+        // assert - read by renamed
+        Assert.Equal(saved, read3);
+
+        // assert - all
+        Assert.DoesNotContain(existing, all);
+        Assert.Contains(saved, all);
     }
 }

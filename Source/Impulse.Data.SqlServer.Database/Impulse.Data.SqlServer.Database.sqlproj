@@ -74,15 +74,16 @@
     <Build Include="Tables\ChatUser.sql" />
     <Build Include="Tables\ChatRoom.sql" />
     <Build Include="Tables\ChatMessage.sql" />
-    <Build Include="Stored Procedures\GetOrAddChatRoomId.sql" />
     <Build Include="Stored Procedures\AddMessage.sql" />
     <Build Include="Stored Procedures\GetOrAddChatUserId.sql" />
     <Build Include="Stored Procedures\GetLatestChatMessagesByChatRoomName.sql" />
     <Build Include="Stored Procedures\GetMessageById.sql" />
-    <Build Include="Stored Procedures\GetOrAddChatRoom.sql" />
+    <Build Include="Stored Procedures\SaveChatRoom.sql" />
     <Build Include="Stored Procedures\GetAllChatRooms.sql" />
     <Build Include="Stored Procedures\GetOrAddChatUser.sql" />
     <Build Include="Stored Procedures\GetAllChatUsers.sql" />
+    <Build Include="Stored Procedures\TryGetChatRoomByGuid.sql" />
+    <Build Include="Stored Procedures\TryGetChatRoomByName.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />

@@ -8,9 +8,19 @@ namespace Impulse.Data;
 public interface IChatRoomRepository
 {
     /// <summary>
-    /// Gets or adds a chat room with the specified name.
+    /// Saves the chat room with the specified details.
     /// </summary>
-    public Task<ChatRoom> GetOrAdd(string name, CancellationToken cancellationToken = default);
+    public Task<ChatRoom> Save(ChatRoom room, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets the chat room with specified guid or null if none is found.
+    /// </summary>
+    public Task<ChatRoom?> TryGetByGuid(Guid guid, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets the chat room with specified name or null if none is found.
+    /// </summary>
+    public Task<ChatRoom?> TryGetByName(string name, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets all chat rooms.
