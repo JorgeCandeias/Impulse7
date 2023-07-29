@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[GetAllChatUsers]
+﻿CREATE PROCEDURE [dbo].[TryGetChatUserByName]
+	@Name NVARCHAR(100)
 AS
 
 SELECT
@@ -10,5 +11,7 @@ SELECT
 	[ETag]
 FROM
 	[dbo].[ChatUser]
+WHERE
+	[Name] = @Name
 
 GO

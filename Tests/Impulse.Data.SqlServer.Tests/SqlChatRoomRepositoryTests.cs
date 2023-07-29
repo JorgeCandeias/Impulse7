@@ -1,5 +1,4 @@
 using Impulse.Core;
-using System.Transactions;
 
 namespace Impulse.Data.SqlServer.Tests;
 

@@ -10,6 +10,8 @@ internal class SqlRepositoryProfile : Profile
             .ForCtorParam(nameof(ChatRoomEntity.Id), x => x.MapFrom(y => 0))
             .ReverseMap();
 
-        CreateMap<ChatUserEntity, ChatUser>();
+        CreateMap<ChatUser, ChatUserEntity>()
+            .ForCtorParam(nameof(ChatUserEntity.Id), x => x.MapFrom(y => 0))
+            .ReverseMap();
     }
 }
