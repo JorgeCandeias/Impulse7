@@ -8,6 +8,8 @@ using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Orleans.Configuration;
+using Serilog;
+using Serilog.Events;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -30,7 +32,12 @@ builder.Logging.ClearProviders();
 if (builder.Environment.IsDevelopment())
 {
     // the console logger must only run in development due its performance impact
-    builder.Logging.AddConsole();
+    builder.Logging.AddSerilog(new LoggerConfiguration()
+        .MinimumLevel.Information()
+        .Filter.ByExcluding(x => x.Properties.TryGetValue("SourceContext", out var property) && property is ScalarValue value && value.Value is string str && str == "Orleans.Runtime.SiloControl" && x.Level <= LogEventLevel.Information)
+        .Filter.ByExcluding(x => x.Properties.TryGetValue("SourceContext", out var property) && property is ScalarValue value && value.Value is string str && str == "Orleans.Runtime.Management.ManagementGrain" && x.Level <= LogEventLevel.Information)
+        .WriteTo.Console()
+        .CreateLogger());
 }
 else
 {
