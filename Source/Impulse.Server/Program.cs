@@ -58,6 +58,19 @@ builder.UseOrleans(orleans =>
         {
             options.Port = ports.Dashboard;
         });
+
+    // add dashboard cpu and memory statistics
+    // this is old code for v3 - it does not yet have a replacement for v7
+    /*
+    if (OperatingSystem.IsWindows())
+    {
+        builder.AddPerfCountersTelemetryConsumer();
+    }
+    else if (OperatingSystem.IsLinux())
+    {
+        builder.UseLinuxEnvironmentStatistics();
+    }
+    */
 });
 
 // add orleans services as appropriate for each environment
