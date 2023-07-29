@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Impulse.Data.SqlServer.Models;
+﻿using Impulse.Data.SqlServer.Models;
 
 namespace Impulse.Data.SqlServer.Repositories;
 
@@ -22,20 +21,41 @@ internal class SqlChatUserRepository : IChatUserRepository
 
         using var connection = Connect();
 
-        var input = _mapper.Map<ChatUserEntity>(room);
+        var entity = _mapper.Map<ChatUserEntity>(room);
 
-        var output = await connection.QuerySingleProcAsync<ChatUserEntity>(
+        var result = await connection.QuerySingleProcAsync<ChatUserEntity>(
             "[dbo].[SaveChatUser]",
             new
             {
-                input.Guid,
-                input.Name,
-                input.ETag
+                entity.Guid,
+                entity.Name,
+                entity.ETag
             },
             _options.CommandTimeout,
             cancellationToken);
 
-        return _mapper.Map<ChatUser>(output);
+        if (result is null)
+        {
+            var etag = await TryGetETagByGuid(entity.Guid, cancellationToken);
+
+            throw new InconsistentStateException("Inconsistent state detected while saving chat user", etag.ToString(), entity.ETag.ToString());
+        }
+
+        return _mapper.Map<ChatUser>(result);
+    }
+
+    public async Task<Guid?> TryGetETagByGuid(Guid guid, CancellationToken cancellationToken = default)
+    {
+        using var connection = Connect();
+
+        return await connection.ExecuteScalarProcAsync<Guid?>(
+            "[dbo].[TryGetChatUserETagByGuid]",
+            new
+            {
+                guid
+            },
+            _options.CommandTimeout,
+            cancellationToken);
     }
 
     public async Task<ChatUser?> TryGetByGuid(Guid guid, CancellationToken cancellationToken = default)

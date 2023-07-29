@@ -1,10 +1,7 @@
-﻿CREATE PROCEDURE [dbo].[GetLatestChatMessagesByChatRoomName]
-	@Name NVARCHAR(100),
-	@Count INT
+﻿CREATE PROCEDURE [dbo].[GetAllMessages]
 AS
 
-/* this query translates rows to the business model immediately */
-SELECT TOP (@Count)
+SELECT
 	[M].[Id],
 	[M].[Guid],
 	[R].[Name] AS [Room],
@@ -19,9 +16,5 @@ FROM
 		ON [R].[Id] = [M].[ChatRoomId]
 	INNER JOIN [dbo].[ChatUser] AS [U]
 		ON [U].[Id] = [M].[ChatUserId]
-WHERE
-	R.[Name] = @Name
-ORDER BY
-	M.[Created] DESC
 
 GO

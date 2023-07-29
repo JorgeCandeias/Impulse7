@@ -10,7 +10,12 @@ public interface IChatUserRepository
     /// <summary>
     /// Saves the chat user with the specified details.
     /// </summary>
-    public Task<ChatUser> Save(ChatUser room, CancellationToken cancellationToken = default);
+    public Task<ChatUser> Save(ChatUser user, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets the stored ETag of the chat user with the specified Guid.
+    /// </summary>
+    Task<Guid?> TryGetETagByGuid(Guid guid, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the chat user with specified guid or null if none is found.

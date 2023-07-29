@@ -22,20 +22,41 @@ internal class SqlChatRoomRepository : IChatRoomRepository
 
         using var connection = Connect();
 
-        var input = _mapper.Map<ChatRoomEntity>(room);
+        var entity = _mapper.Map<ChatRoomEntity>(room);
 
-        var output = await connection.QuerySingleProcAsync<ChatRoomEntity>(
+        var result = await connection.QuerySingleProcAsync<ChatRoomEntity>(
             "[dbo].[SaveChatRoom]",
             new
             {
-                input.Guid,
-                input.Name,
-                input.ETag
+                entity.Guid,
+                entity.Name,
+                entity.ETag
             },
             _options.CommandTimeout,
             cancellationToken);
 
-        return _mapper.Map<ChatRoom>(output);
+        if (result is null)
+        {
+            var etag = await TryGetETagByGuid(entity.Guid, cancellationToken);
+
+            throw new InconsistentStateException("Inconsistent state detected while saving chat room", etag.ToString(), entity.ETag.ToString());
+        }
+
+        return _mapper.Map<ChatRoom>(result);
+    }
+
+    public async Task<Guid?> TryGetETagByGuid(Guid guid, CancellationToken cancellationToken = default)
+    {
+        using var connection = Connect();
+
+        return await connection.ExecuteScalarProcAsync<Guid?>(
+            "[dbo].[TryGetChatRoomETagByGuid]",
+            new
+            {
+                guid
+            },
+            _options.CommandTimeout,
+            cancellationToken);
     }
 
     public async Task<ChatRoom?> TryGetByGuid(Guid guid, CancellationToken cancellationToken = default)

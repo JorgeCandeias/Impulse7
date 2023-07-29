@@ -8,12 +8,27 @@ namespace Impulse.Data;
 public interface IChatMessageRepository
 {
     /// <summary>
-    /// Saves the specified chat message and returns a copy with any repository updates applied.
+    /// Saves the chat message with the specified details.
     /// </summary>
-    Task<ChatMessage> AddMessage(ChatMessage message, CancellationToken cancellationToken = default);
+    public Task<ChatMessage> Save(ChatMessage message, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Gets the latest chat messages for the specified room.
+    /// Gets the stored ETag of the message with the specified Guid.
     /// </summary>
-    Task<IEnumerable<ChatMessage>> GetLatestMessagesByRoom(string room, CancellationToken cancellationToken = default);
+    Task<Guid?> TryGetETagByGuid(Guid guid, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets the chat message with specified guid or null if none is found.
+    /// </summary>
+    public Task<ChatMessage?> TryGetByGuid(Guid guid, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets all chat messages.
+    /// </summary>
+    public Task<IEnumerable<ChatMessage>> GetAll(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets the latest created messages in the specified chat room.
+    /// </summary>
+    public Task<IEnumerable<ChatMessage>> GetLatestCreatedByRoom(string room, int count, CancellationToken cancellationToken = default);
 }

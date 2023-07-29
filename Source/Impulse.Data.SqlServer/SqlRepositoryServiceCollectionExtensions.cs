@@ -12,6 +12,7 @@ public static class SqlRepositoryServiceCollectionExtensions
         return services
             .AddSingleton<IChatRoomRepository, SqlChatRoomRepository>()
             .AddSingleton<IChatUserRepository, SqlChatUserRepository>()
+            .AddSingleton<IChatMessageRepository, SqlChatMessageRepository>()
             .AddAutoMapper(config =>
             {
                 config.AddProfile<SqlRepositoryProfile>();

@@ -13,6 +13,11 @@ public interface IChatRoomRepository
     public Task<ChatRoom> Save(ChatRoom room, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Gets the stored ETag of the chat room with the specified Guid.
+    /// </summary>
+    Task<Guid?> TryGetETagByGuid(Guid guid, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Gets the chat room with specified guid or null if none is found.
     /// </summary>
     public Task<ChatRoom?> TryGetByGuid(Guid guid, CancellationToken cancellationToken = default);

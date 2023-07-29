@@ -22,21 +22,21 @@ public class SqlChatRoomRepositoryTests
         var service = _fixture.TestHost.Services.GetRequiredService<IChatRoomRepository>();
         var guid = Guid.NewGuid();
         var name = Guid.NewGuid().ToString();
-        var room = new ChatRoom(guid, name, DateTimeOffset.MinValue, DateTimeOffset.MinValue, Guid.Empty);
+        var candidate = new ChatRoom(guid, name, DateTimeOffset.MinValue, DateTimeOffset.MinValue, Guid.Empty);
 
         // act
-        var saved = await service.Save(room);
+        var saved = await service.Save(candidate);
         var read1 = await service.TryGetByGuid(guid);
         var read2 = await service.TryGetByName(name);
         var all = await service.GetAll();
 
         // assert - saved
         Assert.NotNull(saved);
-        Assert.Equal(room.Guid, saved.Guid);
-        Assert.Equal(room.Name, saved.Name);
-        Assert.NotEqual(room.Created, saved.Created);
-        Assert.NotEqual(room.Updated, saved.Updated);
-        Assert.NotEqual(room.ETag, saved.ETag);
+        Assert.Equal(candidate.Guid, saved.Guid);
+        Assert.Equal(candidate.Name, saved.Name);
+        Assert.NotEqual(candidate.Created, saved.Created);
+        Assert.NotEqual(candidate.Updated, saved.Updated);
+        Assert.NotEqual(candidate.ETag, saved.ETag);
 
         // assert - read by guid
         Assert.Equal(saved, read1);
