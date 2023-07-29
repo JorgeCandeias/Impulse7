@@ -63,7 +63,6 @@
     <Folder Include="Tables" />
     <Folder Include="Scripts" />
     <Folder Include="Stored Procedures" />
-    <Folder Include="Sequences" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\OrleansMembershipTable.sql" />
