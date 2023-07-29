@@ -11,11 +11,14 @@
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.2.1" />
 	  <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="7.0.0" />
+	  <PackageReference Include="Microsoft.Orleans.Reminders" Version="7.2.1" />
 	  <PackageReference Include="Microsoft.Orleans.Runtime" Version="7.2.1" />
 	  <PackageReference Include="Microsoft.Orleans.Sdk" Version="7.2.1" />
+	  <PackageReference Include="Microsoft.Orleans.Streaming" Version="7.2.1" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Impulse.Core\Impulse.Core.csproj" />
 		<ProjectReference Include="..\Impulse.Grains.Abstractions\Impulse.Grains.Abstractions.csproj" />
 	</ItemGroup>
 

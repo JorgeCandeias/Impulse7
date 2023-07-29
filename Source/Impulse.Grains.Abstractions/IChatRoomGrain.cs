@@ -4,14 +4,14 @@ namespace Impulse.Grains;
 
 public interface IChatRoomGrain : IGrainWithStringKey
 {
-    Task Join(string user);
+    Task Join(ChatUser user);
 
-    Task Leave(string user);
+    Task Leave(ChatUser user);
 
     Task Message(ChatMessage message);
 
     [AlwaysInterleave]
-    Task<ImmutableArray<ChatMessage>> GetHistory();
+    Task<ImmutableArray<ChatMessage>> GetMessages();
 
     [AlwaysInterleave]
     Task<ImmutableArray<ChatUser>> GetUsers();
