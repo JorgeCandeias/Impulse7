@@ -1,4 +1,5 @@
-﻿using Impulse.Data.InMemory.Repositories.ChatRooms;
+﻿using Impulse.Data.InMemory.Repositories.ChatMessages;
+using Impulse.Data.InMemory.Repositories.ChatRooms;
 using Impulse.Data.InMemory.Repositories.ChatUsers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,7 @@ public static class InMemoryRepositoryServiceCollectionExtensions
 
         return services
             .AddSingleton<IChatRoomRepository, InMemoryChatRoomRepository>()
-            .AddSingleton<IChatUserRepository, InMemoryChatUserRepository>();
+            .AddSingleton<IChatUserRepository, InMemoryChatUserRepository>()
+            .AddSingleton<IChatMessageRepository, InMemoryChatMessageRepository>();
     }
 }

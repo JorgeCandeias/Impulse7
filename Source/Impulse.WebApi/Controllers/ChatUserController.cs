@@ -18,17 +18,17 @@ public class ChatUserController : ControllerBase
     private readonly IMapper _mapper;
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ChatUserCreateResponse>>> Get()
+    public async Task<ActionResult<IEnumerable<ChatUserResponse>>> Get()
     {
         var result = await _factory
             .GetChatUsersIndexGrain()
             .GetAll();
 
-        return Ok(_mapper.Map<IEnumerable<ChatUserCreateResponse>>(result));
+        return Ok(_mapper.Map<IEnumerable<ChatUserResponse>>(result));
     }
 
     [HttpGet("{guid}")]
-    public async Task<ActionResult<ChatUserCreateResponse>> Get(Guid guid)
+    public async Task<ActionResult<ChatUserResponse>> Get(Guid guid)
     {
         var result = await _factory
             .GetChatUsersIndexGrain()
@@ -39,18 +39,18 @@ public class ChatUserController : ControllerBase
             return NotFound($"No chat user with guid '{guid}' was found");
         }
 
-        return Ok(_mapper.Map<ChatUserCreateResponse>(result));
+        return Ok(_mapper.Map<ChatUserResponse>(result));
     }
 
     [HttpPost]
-    public async Task<ActionResult<ChatUserCreateResponse>> Post(
+    public async Task<ActionResult<ChatUserResponse>> Post(
         [FromBody, Required] ChatUserCreateRequest request)
     {
         var result = await _factory
             .GetChatUsersIndexGrain()
             .GetOrAdd(request.Name);
 
-        return Ok(_mapper.Map<ChatUserCreateResponse>(result));
+        return Ok(_mapper.Map<ChatUserResponse>(result));
     }
 
     [HttpDelete("{guid}/{etag}")]

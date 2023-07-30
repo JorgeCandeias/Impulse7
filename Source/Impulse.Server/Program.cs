@@ -13,8 +13,11 @@ var ports = new
 
 var builder = Host.CreateApplicationBuilder();
 
-// hardcode the target enrivonment for sample purposes
-builder.Environment.EnvironmentName = Environments.Development;
+// link up the global appsettings file
+builder.Configuration.AddJsonFile("appsettings.global.json", false);
+
+// link up the environment to a configuration key
+builder.Environment.EnvironmentName = builder.Configuration["Environment"]!;
 
 // add appropriate loggers per environment
 builder.Logging.ClearProviders();

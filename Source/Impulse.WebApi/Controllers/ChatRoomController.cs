@@ -18,17 +18,17 @@ public class ChatRoomController : ControllerBase
     private readonly IMapper _mapper;
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ChatRoomCreateResponse>>> Get()
+    public async Task<ActionResult<IEnumerable<ChatRoomResponse>>> Get()
     {
         var result = await _factory
             .GetChatRoomsIndexGrain()
             .GetAll();
 
-        return Ok(_mapper.Map<IEnumerable<ChatRoomCreateResponse>>(result));
+        return Ok(_mapper.Map<IEnumerable<ChatRoomResponse>>(result));
     }
 
     [HttpGet("{guid}")]
-    public async Task<ActionResult<ChatRoomCreateResponse>> Get(Guid guid)
+    public async Task<ActionResult<ChatRoomResponse>> Get(Guid guid)
     {
         var result = await _factory
             .GetChatRoomsIndexGrain()
@@ -39,18 +39,18 @@ public class ChatRoomController : ControllerBase
             return NotFound($"No chat room with guid '{guid}' was found");
         }
 
-        return Ok(_mapper.Map<ChatRoomCreateResponse>(result));
+        return Ok(_mapper.Map<ChatRoomResponse>(result));
     }
 
     [HttpPost]
-    public async Task<ActionResult<ChatRoomCreateResponse>> Post(
+    public async Task<ActionResult<ChatRoomResponse>> Post(
         [FromBody, Required] ChatRoomCreateRequest request)
     {
         var result = await _factory
             .GetChatRoomsIndexGrain()
             .GetOrAdd(request.Name);
 
-        return Ok(_mapper.Map<ChatRoomCreateResponse>(result));
+        return Ok(_mapper.Map<ChatRoomResponse>(result));
     }
 
     [HttpDelete("{guid}/{etag}")]

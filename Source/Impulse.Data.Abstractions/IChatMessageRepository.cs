@@ -31,4 +31,9 @@ public interface IChatMessageRepository
     /// Gets the latest created messages in the specified chat room.
     /// </summary>
     public Task<IEnumerable<ChatMessage>> GetLatestCreatedByRoom(string room, int count, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Removes the message with the specified guid from the repository.
+    /// </summary>
+    public Task Remove(Guid guid, Guid etag, CancellationToken cancellationToken = default);
 }

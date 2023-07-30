@@ -1,7 +1,6 @@
 ﻿using Impulse.Core;
 using Impulse.Core.Exceptions;
 using Impulse.Core.Extensions;
-using Orleans.Storage;
 using System.Collections.Immutable;
 
 namespace Impulse.Data.InMemory.Repositories.ChatRooms;
@@ -28,20 +27,20 @@ internal class InMemoryChatRoomRepositoryGrain : Grain, IInMemoryChatRoomReposit
         _nameIndex.Remove(item.Name);
     }
 
-    public Task<ChatRoom> Save(ChatRoom room)
+    public Task<ChatRoom> Save(ChatRoom item)
     {
-        Guard.IsNotNull(room);
+        Guard.IsNotNull(item);
 
         // add new item
-        if (!_guidIndex.TryGetValue(room.Guid, out var existing))
+        if (!_guidIndex.TryGetValue(item.Guid, out var stored))
         {
             // check name index
-            if (_nameIndex.ContainsKey(room.Name))
+            if (_nameIndex.ContainsKey(item.Name))
             {
                 throw new InvalidOperationException("Duplicate Name");
             }
 
-            var added = new ChatRoom(room.Guid, room.Name, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, Guid.NewGuid());
+            var added = new ChatRoom(item.Guid, item.Name, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, Guid.NewGuid());
 
             Index(added);
 
@@ -49,19 +48,19 @@ internal class InMemoryChatRoomRepositoryGrain : Grain, IInMemoryChatRoomReposit
         }
 
         // ensure etags match
-        if (existing.ETag != room.ETag)
+        if (stored.ETag != item.ETag)
         {
-            throw new InconsistentStateException("Invalid ETag", existing.ETag.ToString(), room.ETag.ToString());
+            throw new ConflictException(item.ETag, stored.ETag);
         }
 
         // ensure no other room has the same name
-        if (_nameIndex.TryGetValue(room.Name, out var other) && other.Guid != room.Guid)
+        if (_nameIndex.TryGetValue(item.Name, out var other) && other.Guid != item.Guid)
         {
             throw new InvalidOperationException("Duplicate Name");
         }
 
         // save the item
-        var saved = new ChatRoom(room.Guid, room.Name, existing.Created, DateTimeOffset.UtcNow, Guid.NewGuid());
+        var saved = new ChatRoom(item.Guid, item.Name, stored.Created, DateTimeOffset.UtcNow, Guid.NewGuid());
 
         Index(saved);
 

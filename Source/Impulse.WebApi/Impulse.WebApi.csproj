@@ -9,6 +9,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Include="..\appsettings.global.json" Link="appsettings.global.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="12.0.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9" />
@@ -19,6 +25,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Impulse.Data.InMemory\Impulse.Data.InMemory.csproj" />
+		<ProjectReference Include="..\Impulse.Data.SqlServer\Impulse.Data.SqlServer.csproj" />
 		<ProjectReference Include="..\Impulse.Grains.Abstractions\Impulse.Grains.Abstractions.csproj" />
 	</ItemGroup>
 

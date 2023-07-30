@@ -39,7 +39,7 @@ internal class SqlChatRoomRepository : IChatRoomRepository
         {
             var etag = await TryGetETagByGuid(entity.Guid, cancellationToken);
 
-            throw new InconsistentStateException("Inconsistent state detected while saving chat room", etag.ToString(), entity.ETag.ToString());
+            throw new ConflictException(entity.ETag, etag);
         }
 
         return _mapper.Map<ChatRoom>(result);

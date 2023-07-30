@@ -1,8 +1,12 @@
 using Impulse.WebApp.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// link up the global appsettings file
+builder.Configuration.AddJsonFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.global.json"), false);
+
+// link up the environment to a configuration key
+builder.Environment.EnvironmentName = builder.Configuration["Environment"]!;
 
 // Add services to the container.
 builder.Services.AddRazorPages();

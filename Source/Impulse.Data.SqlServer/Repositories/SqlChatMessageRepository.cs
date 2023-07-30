@@ -1,4 +1,5 @@
-﻿using Impulse.Data.SqlServer.Models;
+﻿using Impulse.Core.Exceptions;
+using Impulse.Data.SqlServer.Models;
 
 namespace Impulse.Data.SqlServer.Repositories;
 
@@ -38,7 +39,7 @@ internal class SqlChatMessageRepository : IChatMessageRepository
         {
             var etag = await TryGetETagByGuid(entity.Guid, cancellationToken);
 
-            throw new InconsistentStateException("Inconsistent state detected while saving chat message", etag.ToString(), entity.ETag.ToString());
+            throw new ConflictException(entity.ETag, etag);
         }
 
         return _mapper.Map<ChatMessage>(result);
@@ -102,5 +103,27 @@ internal class SqlChatMessageRepository : IChatMessageRepository
             cancellationToken);
 
         return _mapper.Map<IEnumerable<ChatMessage>>(result);
+    }
+
+    public async Task Remove(Guid guid, Guid etag, CancellationToken cancellationToken = default)
+    {
+        using var connection = Connect();
+
+        var result = await connection.ExecuteScalarProcAsync<int?>(
+            "[dbo].[RemoveChatMessage]",
+            new
+            {
+                guid,
+                etag,
+            },
+            _options.CommandTimeout,
+            cancellationToken);
+
+        if (result is null)
+        {
+            var storedETag = await TryGetETagByGuid(guid, cancellationToken);
+
+            throw new ConflictException(etag, storedETag);
+        }
     }
 }

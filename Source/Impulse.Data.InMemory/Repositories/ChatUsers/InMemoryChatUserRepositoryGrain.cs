@@ -1,7 +1,6 @@
 ﻿using Impulse.Core;
 using Impulse.Core.Exceptions;
 using Impulse.Core.Extensions;
-using Orleans.Storage;
 using System.Collections.Immutable;
 
 namespace Impulse.Data.InMemory.Repositories.ChatUsers;
@@ -28,20 +27,20 @@ internal class InMemoryChatUserRepositoryGrain : Grain, IInMemoryChatUserReposit
         return _guidIndex.Values.ToImmutableArray().AsTaskResult<IEnumerable<ChatUser>>();
     }
 
-    public Task<ChatUser> Save(ChatUser user)
+    public Task<ChatUser> Save(ChatUser item)
     {
-        Guard.IsNotNull(user);
+        Guard.IsNotNull(item);
 
         // add new item
-        if (!_guidIndex.TryGetValue(user.Guid, out var existing))
+        if (!_guidIndex.TryGetValue(item.Guid, out var stored))
         {
             // check name index
-            if (_nameIndex.ContainsKey(user.Name))
+            if (_nameIndex.ContainsKey(item.Name))
             {
                 throw new InvalidOperationException("Duplicate Name");
             }
 
-            var added = new ChatUser(user.Guid, user.Name, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, Guid.NewGuid());
+            var added = new ChatUser(item.Guid, item.Name, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, Guid.NewGuid());
 
             Index(added);
 
@@ -49,20 +48,20 @@ internal class InMemoryChatUserRepositoryGrain : Grain, IInMemoryChatUserReposit
         }
 
         // ensure etags match
-        if (existing.ETag != user.ETag)
+        if (stored.ETag != item.ETag)
         {
-            throw new InconsistentStateException("Invalid ETag", existing.ETag.ToString(), user.ETag.ToString());
+            throw new ConflictException(item.ETag, stored.ETag);
         }
 
         // ensure no other room has the same name
-        if (_nameIndex.TryGetValue(user.Name, out var other) && other.Guid != user.Guid)
+        if (_nameIndex.TryGetValue(item.Name, out var other) && other.Guid != item.Guid)
         {
             throw new InvalidOperationException("Duplicate Name");
         }
 
         // save the item
-        var saved = new ChatUser(user.Guid, user.Name, existing.Created, DateTimeOffset.UtcNow, Guid.NewGuid());
-        
+        var saved = new ChatUser(item.Guid, item.Name, stored.Created, DateTimeOffset.UtcNow, Guid.NewGuid());
+
         Index(saved);
 
         return saved.AsTaskResult();

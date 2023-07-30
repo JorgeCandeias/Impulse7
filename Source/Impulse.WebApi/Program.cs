@@ -1,16 +1,34 @@
+using Impulse.Data.InMemory;
+using Impulse.Data.SqlServer;
 using Impulse.WebApi.Models;
 using Orleans.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// fix the environment
-builder.Environment.EnvironmentName = Environments.Development;
+// link up the global appsettings file
+builder.Configuration.AddJsonFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.global.json"), false);
+
+// link up the environment to a configuration key
+builder.Environment.EnvironmentName = builder.Configuration["Environment"]!;
 
 // add common services
 builder.Services.AddAutoMapper(options =>
 {
     options.AddProfile<ApiModelsProfile>();
 });
+
+// add repositories as appropriate for the environment
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddInMemoryRepositories();
+}
+else
+{
+    builder.Services.AddSqlRepositories(options =>
+    {
+        options.ConnectionString = builder.Configuration.GetConnectionString("Application")!;
+    });
+}
 
 // add web api services
 builder.Services.AddControllers();

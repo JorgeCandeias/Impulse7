@@ -33,6 +33,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Data.InMemory", "So
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Grains.Tests", "Tests\Impulse.Grains.Tests\Impulse.Grains.Tests.csproj", "{85FE6382-FB8A-4299-9EF9-27E42A02BC6A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{267918FD-2401-407F-8620-523A83E76133}"
+	ProjectSection(SolutionItems) = preProject
+		Source\appsettings.global.json = Source\appsettings.global.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
