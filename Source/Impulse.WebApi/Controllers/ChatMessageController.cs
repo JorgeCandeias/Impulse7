@@ -9,19 +9,17 @@ namespace Impulse.WebApi.Controllers;
 [ApiController]
 public class ChatMessageController : ControllerBase
 {
-    public ChatMessageController(IGrainFactory factory, IMapper mapper, IChatMessageRepository repository)
+    public ChatMessageController(IMapper mapper, IChatMessageRepository repository)
     {
-        _factory = factory;
         _mapper = mapper;
         _repository = repository;
     }
 
-    private readonly IGrainFactory _factory;
     private readonly IMapper _mapper;
     private readonly IChatMessageRepository _repository;
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ChatMessageResponse>>> Get(CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<ChatMessageResponse>>> Get(CancellationToken cancellationToken = default)
     {
         var result = await _repository.GetAll(cancellationToken);
 
@@ -29,7 +27,7 @@ public class ChatMessageController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    public async Task<ActionResult<ChatMessageResponse>> Get(Guid guid, CancellationToken cancellationToken)
+    public async Task<ActionResult<ChatMessageResponse>> Get(Guid guid, CancellationToken cancellationToken = default)
     {
         var result = await _repository.TryGetByGuid(guid, cancellationToken);
 
@@ -41,8 +39,16 @@ public class ChatMessageController : ControllerBase
         return Ok(_mapper.Map<ChatMessageResponse>(result));
     }
 
+    [HttpGet("latest/{room}/{count}")]
+    public async Task<ActionResult<ChatMessageResponse>> GetLatestCreatedByRoom([Required] string room, int count = 10, CancellationToken cancellationToken = default)
+    {
+        var result = await _repository.GetLatestCreatedByRoom(room, count, cancellationToken);
+
+        return Ok(_mapper.Map<IEnumerable<ChatMessageResponse>>(result));
+    }
+
     [HttpPost]
-    public async Task<ActionResult<ChatMessageResponse>> Post([FromBody, Required] ChatMessageCreateRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ChatMessageResponse>> Post([FromBody, Required] ChatMessageCreateRequest request, CancellationToken cancellationToken = default)
     {
         var message = _mapper.Map<ChatMessage>(request);
 
@@ -52,13 +58,11 @@ public class ChatMessageController : ControllerBase
     }
 
     [HttpDelete("{guid}/{etag}")]
-    public async Task<ActionResult> Delete(
-        [Required] Guid guid,
-        [Required] Guid etag)
+    public async Task<ActionResult> Delete([Required] Guid guid, [Required] Guid etag, CancellationToken cancellationToken = default)
     {
         try
         {
-            await _repository.Remove(guid, etag);
+            await _repository.Remove(guid, etag, cancellationToken);
         }
         catch (ConflictException ex)
         {

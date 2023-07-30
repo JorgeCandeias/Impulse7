@@ -7,8 +7,28 @@ namespace Impulse.Data.InMemory.Repositories.ChatMessages;
 
 internal class InMemoryChatMessageRepositoryGrain : Grain, IInMemoryChatMessageRepositoryGrain
 {
+    /// <summary>
+    /// Indexes messages by guid.
+    /// </summary>
     private readonly Dictionary<Guid, ChatMessage> _guidIndex = new();
-    private readonly Dictionary<string, HashSet<Guid>> _roomIndex = new();
+
+    /// <summary>
+    /// Indexes messages by room and keeps them in descending order of created date.
+    /// </summary>
+    private readonly Dictionary<string, SortedSet<ChatMessage>> _roomIndex = new();
+
+    /// <summary>
+    /// Defines a comparer that sorts messages by descending order of created date.
+    /// </summary>
+    private readonly Comparer<ChatMessage> _descendingCreatedComparer = Comparer<ChatMessage>.Create((x, y) =>
+    {
+        // compare by created date first to ensure intended ordering
+        var byCreated = Comparer<DateTimeOffset>.Default.Compare(x.Created, y.Created);
+        if (byCreated != 0) return -byCreated;
+
+        // otherwise compare by default record rules
+        return Comparer<ChatMessage>.Default.Compare(x, y);
+    });
 
     public Task<IEnumerable<ChatMessage>> GetAll()
     {
@@ -17,22 +37,31 @@ internal class InMemoryChatMessageRepositoryGrain : Grain, IInMemoryChatMessageR
 
     private void Index(ChatMessage item)
     {
+        // index by guid
         _guidIndex[item.Guid] = item;
 
+        // index by room, ordered by descending created date
         if (!_roomIndex.TryGetValue(item.Room, out var values))
         {
-            values = new();
+            _roomIndex[item.Room] = values = new(_descendingCreatedComparer);
         }
-        values.Add(item.Guid);
+        values.Add(item);
     }
 
     private void Unindex(ChatMessage item)
     {
+        // unindex by guid
         _guidIndex.Remove(item.Guid);
 
+        // unindex by room
         if (_roomIndex.TryGetValue(item.Room, out var values))
         {
-            values.Remove(item.Guid);
+            values.Remove(item);
+
+            if (values.Count == 0)
+            {
+                _roomIndex.Remove(item.Room);
+            }
         }
     }
 
@@ -103,16 +132,18 @@ internal class InMemoryChatMessageRepositoryGrain : Grain, IInMemoryChatMessageR
         Guard.IsNotNull(room);
         Guard.IsGreaterThanOrEqualTo(count, 0);
 
+        if (count == 0)
+        {
+            return ImmutableArray<ChatMessage>.Empty.AsTaskResult<IEnumerable<ChatMessage>>();
+        }
+
         var result = ImmutableArray.CreateBuilder<ChatMessage>();
 
         if (_roomIndex.TryGetValue(room, out var values))
         {
-            foreach (var guid in values)
+            foreach (var item in values.Take(count))
             {
-                if (_guidIndex.TryGetValue(guid, out var message))
-                {
-                    result.Add(message);
-                }
+                result.Add(item);
             }
         }
 
