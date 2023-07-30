@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.Data.SqlServer.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Data.InMemory", "Source\Impulse.Data.InMemory\Impulse.Data.InMemory.csproj", "{A2180EE9-1B79-4C91-91FC-91677E2622C6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.Grains.Tests", "Tests\Impulse.Grains.Tests\Impulse.Grains.Tests.csproj", "{85FE6382-FB8A-4299-9EF9-27E42A02BC6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,12 +93,17 @@ Global
 		{A2180EE9-1B79-4C91-91FC-91677E2622C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2180EE9-1B79-4C91-91FC-91677E2622C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2180EE9-1B79-4C91-91FC-91677E2622C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85FE6382-FB8A-4299-9EF9-27E42A02BC6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85FE6382-FB8A-4299-9EF9-27E42A02BC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85FE6382-FB8A-4299-9EF9-27E42A02BC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85FE6382-FB8A-4299-9EF9-27E42A02BC6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C340928D-6C5E-407A-950B-F9940E70D8EE} = {73A0CA27-3B37-480A-A322-9606C82A03F7}
+		{85FE6382-FB8A-4299-9EF9-27E42A02BC6A} = {73A0CA27-3B37-480A-A322-9606C82A03F7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD6CBA79-5192-4A13-BF3A-BB345DABCFC8}
