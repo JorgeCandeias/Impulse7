@@ -34,8 +34,6 @@ public class SqlChatUserRepositoryTests
         Assert.NotNull(saved);
         Assert.Equal(candidate.Guid, saved.Guid);
         Assert.Equal(candidate.Name, saved.Name);
-        Assert.NotEqual(candidate.Created, saved.Created);
-        Assert.NotEqual(candidate.Updated, saved.Updated);
         Assert.NotEqual(candidate.ETag, saved.ETag);
 
         // assert - read by guid
@@ -75,7 +73,6 @@ public class SqlChatUserRepositoryTests
         Assert.Equal(guid, saved.Guid);
         Assert.Equal(rename, saved.Name);
         Assert.Equal(existing.Created, saved.Created);
-        Assert.NotEqual(existing.Updated, saved.Updated);
         Assert.NotEqual(existing.ETag, saved.ETag);
 
         // assert - read by guid

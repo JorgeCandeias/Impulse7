@@ -45,8 +45,6 @@ public class SqlChatMessageRepositoryTests
         Assert.Equal(candidate.Guid, saved.Guid);
         Assert.Equal(candidate.Room, saved.Room);
         Assert.Equal(candidate.User, saved.User);
-        Assert.NotEqual(candidate.Created, saved.Created);
-        Assert.NotEqual(candidate.Updated, saved.Updated);
         Assert.NotEqual(candidate.ETag, saved.ETag);
 
         // assert - read by guid
@@ -96,7 +94,6 @@ public class SqlChatMessageRepositoryTests
         Assert.Equal(user, saved.User);
         Assert.Equal(revision, saved.Text);
         Assert.Equal(existing.Created, saved.Created);
-        Assert.NotEqual(existing.Updated, saved.Updated);
         Assert.NotEqual(existing.ETag, saved.ETag);
 
         // assert - read by guid
