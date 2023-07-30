@@ -1,6 +1,6 @@
 ﻿using Impulse.Core;
 
-namespace Impulse.Data;
+namespace Impulse.Grains;
 
 public interface IChatUsersIndexGrain : IGrainWithStringKey
 {

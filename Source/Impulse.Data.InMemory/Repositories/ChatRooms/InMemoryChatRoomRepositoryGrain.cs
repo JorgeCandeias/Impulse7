@@ -1,4 +1,5 @@
 ﻿using Impulse.Core;
+using Impulse.Core.Exceptions;
 using Impulse.Core.Extensions;
 using Orleans.Storage;
 using System.Collections.Immutable;
@@ -15,6 +16,18 @@ internal class InMemoryChatRoomRepositoryGrain : Grain, IInMemoryChatRoomReposit
         return _guidIndex.Values.ToImmutableArray().AsTaskResult<IEnumerable<ChatRoom>>();
     }
 
+    private void Index(ChatRoom item)
+    {
+        _guidIndex[item.Guid] = item;
+        _nameIndex[item.Name] = item;
+    }
+
+    private void Unindex(ChatRoom item)
+    {
+        _guidIndex.Remove(item.Guid);
+        _nameIndex.Remove(item.Name);
+    }
+
     public Task<ChatRoom> Save(ChatRoom room)
     {
         Guard.IsNotNull(room);
@@ -29,8 +42,8 @@ internal class InMemoryChatRoomRepositoryGrain : Grain, IInMemoryChatRoomReposit
             }
 
             var added = new ChatRoom(room.Guid, room.Name, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, Guid.NewGuid());
-            _guidIndex[added.Guid] = added;
-            _nameIndex[added.Name] = added;
+
+            Index(added);
 
             return added.AsTaskResult();
         }
@@ -49,8 +62,8 @@ internal class InMemoryChatRoomRepositoryGrain : Grain, IInMemoryChatRoomReposit
 
         // save the item
         var saved = new ChatRoom(room.Guid, room.Name, existing.Created, DateTimeOffset.UtcNow, Guid.NewGuid());
-        _guidIndex[saved.Guid] = saved;
-        _nameIndex[saved.Name] = saved;
+
+        Index(saved);
 
         return saved.AsTaskResult();
     }
@@ -76,5 +89,25 @@ internal class InMemoryChatRoomRepositoryGrain : Grain, IInMemoryChatRoomReposit
         var result = _guidIndex.TryGetValue(guid, out var item) ? item.ETag : (Guid?)null;
 
         return result.AsTaskResult();
+    }
+
+    public Task Remove(Guid guid, Guid etag)
+    {
+        // throw on non-existing item to remove
+        if (!_guidIndex.TryGetValue(guid, out var stored))
+        {
+            throw new ConflictException(etag, null);
+        }
+
+        // throw on wrong etag to remove
+        if (etag != stored.ETag)
+        {
+            throw new ConflictException(etag, stored.ETag);
+        }
+
+        // if the above succeeded then unindex the item
+        Unindex(stored);
+
+        return Task.CompletedTask;
     }
 }

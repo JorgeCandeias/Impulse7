@@ -1,6 +1,6 @@
 ﻿using Impulse.Core;
 
-namespace Impulse.Data;
+namespace Impulse.Grains;
 
 public interface IChatRoomsIndexGrain : IGrainWithStringKey
 {
@@ -9,6 +9,8 @@ public interface IChatRoomsIndexGrain : IGrainWithStringKey
     Task<ChatRoom?> TryGetByGuid(Guid guid);
 
     Task<ImmutableArray<ChatRoom>> GetAll();
+
+    Task Remove(Guid guid, Guid etag);
 }
 
 public static class ChatRoomsIndexGrainFactoryExtensions

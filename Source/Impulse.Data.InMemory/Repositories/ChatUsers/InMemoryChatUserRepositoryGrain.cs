@@ -42,8 +42,8 @@ internal class InMemoryChatUserRepositoryGrain : Grain, IInMemoryChatUserReposit
             }
 
             var added = new ChatUser(user.Guid, user.Name, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, Guid.NewGuid());
-            _guidIndex[added.Guid] = added;
-            _nameIndex[added.Name] = added;
+
+            Index(added);
 
             return added.AsTaskResult();
         }
@@ -62,8 +62,8 @@ internal class InMemoryChatUserRepositoryGrain : Grain, IInMemoryChatUserReposit
 
         // save the item
         var saved = new ChatUser(user.Guid, user.Name, existing.Created, DateTimeOffset.UtcNow, Guid.NewGuid());
-        _guidIndex[saved.Guid] = saved;
-        _nameIndex[saved.Name] = saved;
+        
+        Index(saved);
 
         return saved.AsTaskResult();
     }

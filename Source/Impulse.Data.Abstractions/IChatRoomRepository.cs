@@ -31,4 +31,9 @@ public interface IChatRoomRepository
     /// Gets all chat rooms.
     /// </summary>
     public Task<IEnumerable<ChatRoom>> GetAll(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Removes the chat room with the specified guid from the repository.
+    /// </summary>
+    public Task Remove(Guid guid, Guid etag, CancellationToken cancellationToken = default);
 }

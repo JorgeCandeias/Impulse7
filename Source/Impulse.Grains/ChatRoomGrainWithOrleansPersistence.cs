@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Orleans.Concurrency;
 using Orleans.Streams;
-using System.Collections.Immutable;
 
 namespace Impulse.Grains;
 

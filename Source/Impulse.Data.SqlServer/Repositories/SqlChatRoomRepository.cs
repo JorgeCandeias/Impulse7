@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Impulse.Core.Exceptions;
 using Impulse.Data.SqlServer.Models;
 
 namespace Impulse.Data.SqlServer.Repositories;
@@ -104,5 +104,27 @@ internal class SqlChatRoomRepository : IChatRoomRepository
             cancellationToken);
 
         return _mapper.Map<IEnumerable<ChatRoom>>(result);
+    }
+
+    public async Task Remove(Guid guid, Guid etag, CancellationToken cancellationToken = default)
+    {
+        using var connection = Connect();
+
+        var result = await connection.QuerySingleOrDefaultProcAsync<ChatRoomEntity>(
+            "[dbo].[RemoveChatRoom]",
+            new
+            {
+                guid,
+                etag
+            },
+            _options.CommandTimeout,
+            cancellationToken);
+
+        if (result is null)
+        {
+            var storedETag = await TryGetETagByGuid(guid, cancellationToken);
+
+            throw new ConflictException(etag, storedETag);
+        }
     }
 }

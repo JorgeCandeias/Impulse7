@@ -87,6 +87,7 @@
     <Build Include="Stored Procedures\SaveChatMessage.sql" />
     <Build Include="Stored Procedures\GetAllMessages.sql" />
     <Build Include="Stored Procedures\RemoveChatUser.sql" />
+    <Build Include="Stored Procedures\RemoveChatRoom.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />

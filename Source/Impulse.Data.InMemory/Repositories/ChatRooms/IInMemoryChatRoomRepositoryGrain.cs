@@ -13,6 +13,8 @@ internal interface IInMemoryChatRoomRepositoryGrain : IGrainWithStringKey
     public Task<ChatRoom?> TryGetByName(string name);
 
     public Task<Guid?> TryGetETagByGuid(Guid guid);
+
+    public Task Remove(Guid guid, Guid etag);
 }
 
 internal static class InMemoryChatRoomRepositoryGrainFactoryExtensions

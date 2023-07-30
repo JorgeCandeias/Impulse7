@@ -6,9 +6,9 @@ namespace Impulse.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ChatUserController : ControllerBase
+public class ChatRoomController : ControllerBase
 {
-    public ChatUserController(IGrainFactory factory, IMapper mapper)
+    public ChatRoomController(IGrainFactory factory, IMapper mapper)
     {
         _factory = factory;
         _mapper = mapper;
@@ -18,39 +18,39 @@ public class ChatUserController : ControllerBase
     private readonly IMapper _mapper;
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ChatUserCreateResponse>>> Get()
+    public async Task<ActionResult<IEnumerable<ChatRoomCreateResponse>>> Get()
     {
         var result = await _factory
-            .GetChatUsersIndexGrain()
+            .GetChatRoomsIndexGrain()
             .GetAll();
 
-        return Ok(_mapper.Map<IEnumerable<ChatUserCreateResponse>>(result));
+        return Ok(_mapper.Map<IEnumerable<ChatRoomCreateResponse>>(result));
     }
 
     [HttpGet("{guid}")]
-    public async Task<ActionResult<ChatUserCreateResponse>> Get(Guid guid)
+    public async Task<ActionResult<ChatRoomCreateResponse>> Get(Guid guid)
     {
         var result = await _factory
-            .GetChatUsersIndexGrain()
+            .GetChatRoomsIndexGrain()
             .TryGetByGuid(guid);
 
         if (result is null)
         {
-            return NotFound($"No chat user with guid '{guid}' was found");
+            return NotFound($"No chat room with guid '{guid}' was found");
         }
 
-        return Ok(_mapper.Map<ChatUserCreateResponse>(result));
+        return Ok(_mapper.Map<ChatRoomCreateResponse>(result));
     }
 
     [HttpPost]
-    public async Task<ActionResult<ChatUserCreateResponse>> Post(
-        [FromBody, Required] ChatUserCreateRequest request)
+    public async Task<ActionResult<ChatRoomCreateResponse>> Post(
+        [FromBody, Required] ChatRoomCreateRequest request)
     {
         var result = await _factory
-            .GetChatUsersIndexGrain()
+            .GetChatRoomsIndexGrain()
             .GetOrAdd(request.Name);
 
-        return Ok(_mapper.Map<ChatUserCreateResponse>(result));
+        return Ok(_mapper.Map<ChatRoomCreateResponse>(result));
     }
 
     [HttpDelete("{guid}/{etag}")]
@@ -61,7 +61,7 @@ public class ChatUserController : ControllerBase
         try
         {
             await _factory
-                .GetChatUsersIndexGrain()
+                .GetChatRoomsIndexGrain()
                 .Remove(guid, etag);
         }
         catch (ConflictException ex)

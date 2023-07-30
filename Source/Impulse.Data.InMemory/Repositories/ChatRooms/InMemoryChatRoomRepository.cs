@@ -35,4 +35,9 @@ internal class InMemoryChatRoomRepository : IChatRoomRepository
     {
         return _factory.GetInMemoryChatRoomRepositoryGrain().TryGetETagByGuid(guid);
     }
+
+    public Task Remove(Guid guid, Guid etag, CancellationToken cancellationToken = default)
+    {
+        return _factory.GetInMemoryChatRoomRepositoryGrain().Remove(guid, etag);
+    }
 }
