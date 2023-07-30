@@ -1,15 +1,48 @@
+using Impulse.WebApi.Models;
+using Orleans.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// fix the environment
+builder.Environment.EnvironmentName = Environments.Development;
 
+// add common services
+builder.Services.AddAutoMapper(options =>
+{
+    options.AddProfile<ApiModelsProfile>();
+});
+
+// add web api services
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// add orleans services
+builder.Services.AddOrleansClient(orleans =>
+{
+    if (builder.Environment.IsDevelopment())
+    {
+        orleans.UseLocalhostClustering();
+    }
+    else
+    {
+        orleans
+            .UseAdoNetClustering(options =>
+            {
+                options.Invariant = "Microsoft.Data.SqlClient";
+                options.ConnectionString = builder.Configuration.GetConnectionString("Orleans");
+            })
+            .Configure<ClusterOptions>(options =>
+            {
+                options.ClusterId = nameof(Impulse);
+                options.ServiceId = nameof(Impulse);
+            })
+            .AddMemoryStreams("Chat");
+    }
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -17,9 +50,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

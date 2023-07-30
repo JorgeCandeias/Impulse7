@@ -9,8 +9,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="12.0.1" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9" />
 		<PackageReference Include="Microsoft.Orleans.Client" Version="7.2.1" />
+		<PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="7.2.1" />
+		<PackageReference Include="Microsoft.Orleans.Streaming" Version="7.2.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	</ItemGroup>
 

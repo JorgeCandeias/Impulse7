@@ -7,6 +7,8 @@ public interface IChatRoomsIndexGrain : IGrainWithStringKey
     Task<ChatRoom> GetOrAdd(string name);
 
     Task<ChatRoom?> TryGetByGuid(Guid guid);
+
+    Task<ImmutableArray<ChatRoom>> GetAll();
 }
 
 public static class ChatRoomsIndexGrainFactoryExtensions

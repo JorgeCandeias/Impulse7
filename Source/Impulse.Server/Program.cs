@@ -1,18 +1,6 @@
-﻿using Impulse.Grains;
+﻿using Impulse.Data.SqlServer;
+using Impulse.Grains;
 using Impulse.Server;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using OpenTelemetry.Exporter;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-using Orleans.Configuration;
-using Serilog;
-using Serilog.Events;
-using System.Diagnostics;
-using System.Net;
-using System.Net.Sockets;
 
 var ports = new
 {
@@ -73,7 +61,7 @@ builder.UseOrleans(orleans =>
     */
 });
 
-// add orleans services as appropriate for each environment
+// add orleans and other services as appropriate for each environment
 if (builder.Environment.IsDevelopment())
 {
     builder.UseOrleans(orleans =>
@@ -115,6 +103,11 @@ else
                 options.Invariant = "Microsoft.Data.SqlClient";
                 options.ConnectionString = builder.Configuration.GetConnectionString("Orleans");
             });
+    });
+
+    builder.Services.AddSqlRepositories(options =>
+    {
+        options.ConnectionString = builder.Configuration.GetConnectionString("Application")!;
     });
 }
 

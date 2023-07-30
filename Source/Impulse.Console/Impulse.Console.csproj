@@ -11,6 +11,8 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.Orleans.Client" Version="7.2.1" />
+	  <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="7.2.1" />
+	  <PackageReference Include="Microsoft.Orleans.Streaming" Version="7.2.1" />
 	</ItemGroup>
 
 </Project>

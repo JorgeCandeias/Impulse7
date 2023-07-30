@@ -1,5 +1,6 @@
 ﻿using Impulse.Core;
 using Impulse.Data;
+using System.Collections.Immutable;
 
 namespace Impulse.Grains;
 
@@ -64,6 +65,13 @@ internal class ChatRoomsIndexGrain : Grain, IChatRoomsIndexGrain
     public Task<ChatRoom?> TryGetByGuid(Guid guid)
     {
         var result = _guidIndex.TryGetValue(guid, out var item) ? item : null;
+
+        return Task.FromResult(result);
+    }
+
+    public Task<ImmutableArray<ChatRoom>> GetAll()
+    {
+        var result = _guidIndex.Values.ToImmutableArray();
 
         return Task.FromResult(result);
     }
