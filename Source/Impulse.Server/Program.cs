@@ -1,4 +1,5 @@
-﻿using Impulse.Data.SqlServer;
+﻿using Impulse.Data.InMemory;
+using Impulse.Data.SqlServer;
 using Impulse.Grains;
 using Impulse.Server;
 
@@ -71,6 +72,8 @@ if (builder.Environment.IsDevelopment())
             .AddMemoryGrainStorageAsDefault()
             .AddMemoryGrainStorage("PubSubStore");
     });
+
+    builder.Services.AddInMemoryRepositories();
 }
 else
 {
