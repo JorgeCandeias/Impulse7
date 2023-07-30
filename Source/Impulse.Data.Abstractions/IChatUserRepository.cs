@@ -10,7 +10,7 @@ public interface IChatUserRepository
     /// <summary>
     /// Saves the chat user with the specified details.
     /// </summary>
-    public Task<ChatUser> Save(ChatUser user, CancellationToken cancellationToken = default);
+    public Task<ChatUser> Save(ChatUser item, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the stored ETag of the chat user with the specified Guid.
@@ -31,4 +31,9 @@ public interface IChatUserRepository
     /// Gets all chat users.
     /// </summary>
     public Task<IEnumerable<ChatUser>> GetAll(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Removes the user with the specified guid from the repository.
+    /// </summary>
+    public Task Remove(Guid guid, Guid etag, CancellationToken cancellationToken = default);
 }

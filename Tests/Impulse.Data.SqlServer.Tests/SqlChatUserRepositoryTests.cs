@@ -91,4 +91,29 @@ public class SqlChatUserRepositoryTests
         Assert.DoesNotContain(existing, all);
         Assert.Contains(saved, all);
     }
+
+    [Fact]
+    [Trait("Category", "Database")]
+    public async Task RemovesChatUser()
+    {
+        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+        // arrange
+        var service = _fixture.TestHost.Services.GetRequiredService<IChatUserRepository>();
+        var guid = Guid.NewGuid();
+        var name = Guid.NewGuid().ToString();
+        var candidate = new ChatUser(guid, name, DateTimeOffset.MinValue, DateTimeOffset.MinValue, Guid.Empty);
+        var saved = await service.Save(candidate);
+
+        // act
+        await service.Remove(saved.Guid, saved.ETag);
+        var read1 = await service.TryGetByGuid(guid);
+        var read2 = await service.TryGetByName(name);
+        var all = await service.GetAll();
+
+        // assert
+        Assert.Null(read1);
+        Assert.Null(read2);
+        Assert.DoesNotContain(saved, all);
+    }
 }

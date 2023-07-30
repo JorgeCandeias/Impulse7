@@ -1,3 +1,13 @@
-﻿namespace Impulse.WebApi.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record ApiChatUser(Guid Guid, string Name, DateTimeOffset Created, DateTimeOffset Updated, Guid ETag);
+namespace Impulse.WebApi.Models;
+
+public record ChatUserCreateRequest(
+    [Required] string Name);
+
+public record ChatUserCreateResponse(
+    Guid Guid,
+    string Name,
+    DateTimeOffset Created,
+    DateTimeOffset Updated,
+    Guid ETag);

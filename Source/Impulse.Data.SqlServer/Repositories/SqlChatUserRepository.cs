@@ -1,4 +1,5 @@
-﻿using Impulse.Data.SqlServer.Models;
+﻿using Impulse.Core.Exceptions;
+using Impulse.Data.SqlServer.Models;
 
 namespace Impulse.Data.SqlServer.Repositories;
 
@@ -15,13 +16,13 @@ internal class SqlChatUserRepository : IChatUserRepository
 
     private SqlConnection Connect() => new(_options.ConnectionString);
 
-    public async Task<ChatUser> Save(ChatUser room, CancellationToken cancellationToken = default)
+    public async Task<ChatUser> Save(ChatUser item, CancellationToken cancellationToken = default)
     {
-        Guard.IsNotNull(room);
+        Guard.IsNotNull(item);
 
         using var connection = Connect();
 
-        var entity = _mapper.Map<ChatUserEntity>(room);
+        var entity = _mapper.Map<ChatUserEntity>(item);
 
         var result = await connection.QuerySingleProcAsync<ChatUserEntity>(
             "[dbo].[SaveChatUser]",
@@ -38,7 +39,7 @@ internal class SqlChatUserRepository : IChatUserRepository
         {
             var etag = await TryGetETagByGuid(entity.Guid, cancellationToken);
 
-            throw new InconsistentStateException("Inconsistent state detected while saving chat user", etag.ToString(), entity.ETag.ToString());
+            throw new ConflictException(item.ETag, etag);
         }
 
         return _mapper.Map<ChatUser>(result);
@@ -103,5 +104,27 @@ internal class SqlChatUserRepository : IChatUserRepository
             cancellationToken);
 
         return _mapper.Map<IEnumerable<ChatUser>>(result);
+    }
+
+    public async Task Remove(Guid guid, Guid etag, CancellationToken cancellationToken = default)
+    {
+        using var connection = Connect();
+
+        var result = await connection.QuerySingleOrDefaultProcAsync<ChatUserEntity>(
+            "[dbo].[RemoveChatUser]",
+            new
+            {
+                guid,
+                etag
+            },
+            _options.CommandTimeout,
+            cancellationToken);
+
+        if (result is null)
+        {
+            var storedETag = await TryGetETagByGuid(guid, cancellationToken);
+
+            throw new ConflictException(etag, storedETag);
+        }
     }
 }

@@ -7,6 +7,6 @@ internal class ApiModelsProfile : Profile
 {
     public ApiModelsProfile()
     {
-        CreateMap<ChatUser, ApiChatUser>();
+        CreateMap<ChatUser, ChatUserCreateResponse>();
     }
 }

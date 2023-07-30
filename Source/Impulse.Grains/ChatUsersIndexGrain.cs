@@ -1,5 +1,7 @@
 ﻿using Impulse.Core;
+using Impulse.Core.Exceptions;
 using Impulse.Data;
+using System.Collections.Immutable;
 
 namespace Impulse.Grains;
 
@@ -29,6 +31,15 @@ internal class ChatUsersIndexGrain : Grain, IChatUsersIndexGrain
     {
         _guidIndex[item.Guid] = item;
         _nameIndex[item.Name] = item;
+    }
+
+    /// <summary>
+    /// Unindexes the specified user.
+    /// </summary>
+    private void Unindex(ChatUser item)
+    {
+        _guidIndex.Remove(item.Guid);
+        _nameIndex.Remove(item.Name);
     }
 
     public override async Task OnActivateAsync(CancellationToken cancellationToken)
@@ -66,5 +77,42 @@ internal class ChatUsersIndexGrain : Grain, IChatUsersIndexGrain
         var result = _guidIndex.TryGetValue(guid, out var item) ? item : null;
 
         return Task.FromResult(result);
+    }
+
+    public Task<ImmutableArray<ChatUser>> GetAll()
+    {
+        var result = _guidIndex.Values.ToImmutableArray();
+
+        return Task.FromResult(result);
+    }
+
+    public async Task Remove(Guid guid, Guid etag)
+    {
+        // throw on non-existing item to remove
+        if (!_guidIndex.TryGetValue(guid, out var stored))
+        {
+            throw new ConflictException(etag, null);
+        }
+
+        // throw on wrong etag to remove
+        if (etag != stored.ETag)
+        {
+            throw new ConflictException(etag, stored.ETag);
+        }
+
+        try
+        {
+            // we can safely remove now
+            await _repository.Remove(guid, etag);
+        }
+        catch (ConflictException)
+        {
+            // if removing failed then deactive the grain to allow resync
+            DeactivateOnIdle();
+            throw;
+        }
+
+        // if the above succeeded then unindex the item
+        Unindex(stored);
     }
 }

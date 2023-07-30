@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Impulse.Core.Exceptions;
 using Impulse.Data;
 using Impulse.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Impulse.WebApi.Controllers
 {
@@ -18,40 +20,59 @@ namespace Impulse.WebApi.Controllers
         private readonly IGrainFactory _factory;
         private readonly IMapper _mapper;
 
-        // GET: api/<UserController>
         [HttpGet]
-        public async Task<IEnumerable<ApiChatUser>> Get()
+        public async Task<ActionResult<IEnumerable<ChatUserCreateResponse>>> Get()
         {
             var result = await _factory
-                .GetChatRoomsIndexGrain()
+                .GetChatUsersIndexGrain()
                 .GetAll();
 
-            return _mapper.Map<IEnumerable<ApiChatUser>>(result);
+            return Ok(_mapper.Map<IEnumerable<ChatUserCreateResponse>>(result));
         }
 
-        // GET api/<UserController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{guid}")]
+        public async Task<ActionResult<ChatUserCreateResponse>> Get(Guid guid)
         {
-            return "value";
+            var result = await _factory
+                .GetChatUsersIndexGrain()
+                .TryGetByGuid(guid);
+
+            if (result is null)
+            {
+                return NotFound($"No chat user with guid '{guid}' was found");
+            }
+
+            return Ok(_mapper.Map<ChatUserCreateResponse>(result));
         }
 
-        // POST api/<UserController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<ChatUserCreateResponse>> Post(
+            [FromBody, Required] ChatUserCreateRequest request)
         {
+            var result = await _factory
+                .GetChatUsersIndexGrain()
+                .GetOrAdd(request.Name);
+
+            return Ok(_mapper.Map<ChatUserCreateResponse>(result));
         }
 
-        // PUT api/<UserController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpDelete("{guid}/{etag}")]
+        public async Task<ActionResult> Delete(
+            [Required] Guid guid,
+            [Required] Guid etag)
         {
-        }
+            try
+            {
+                await _factory
+                    .GetChatUsersIndexGrain()
+                    .Remove(guid, etag);
+            }
+            catch (ConflictException ex)
+            {
+                return Conflict($"The provided ETag '{ex.CurrentETag}' is different from the stored version '{ex.StoredETag}'");
+            }
 
-        // DELETE api/<UserController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return Ok();
         }
     }
 }
