@@ -23,6 +23,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Impulse.Data.InMemory\Impulse.Data.InMemory.csproj" />
+		<ProjectReference Include="..\Impulse.Data.SqlServer\Impulse.Data.SqlServer.csproj" />
 		<ProjectReference Include="..\Impulse.Grains.Abstractions\Impulse.Grains.Abstractions.csproj" />
 	</ItemGroup>
 

@@ -1,4 +1,7 @@
+using Impulse.Data.InMemory;
+using Impulse.Data.SqlServer;
 using Impulse.WebApp.Data;
+using Orleans.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +10,43 @@ builder.Configuration.AddJsonFile(Path.Combine(AppDomain.CurrentDomain.BaseDirec
 
 // link up the environment to a configuration key
 builder.Environment.EnvironmentName = builder.Configuration["Environment"]!;
+
+// add development services
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services
+        .AddOrleansClient(orleans =>
+        {
+            orleans
+                .UseLocalhostClustering();
+        })
+        .AddInMemoryRepositories();
+}
+
+// add production services
+else
+{
+    builder.Services
+        .AddOrleansClient(orleans =>
+        {
+            orleans
+                .UseAdoNetClustering(options =>
+                {
+                    options.Invariant = "Microsoft.Data.SqlClient";
+                    options.ConnectionString = builder.Configuration.GetConnectionString("Orleans");
+                })
+                .Configure<ClusterOptions>(options =>
+                {
+                    options.ClusterId = nameof(Impulse);
+                    options.ServiceId = nameof(Impulse);
+                })
+                .AddMemoryStreams("Chat");
+        })
+        .AddSqlRepositories(options =>
+        {
+            options.ConnectionString = builder.Configuration.GetConnectionString("Application")!;
+        });
+}
 
 // Add services to the container.
 builder.Services.AddRazorPages();
