@@ -23,9 +23,9 @@ builder.Environment.EnvironmentName = builder.Configuration["Environment"]!;
 builder.UseOrleans(orleans =>
 {
     orleans
-        .AddActivityGrainCallFilter(options =>
+        .AddLoggingGrainCallFilter(options =>
         {
-            options.AllowedAssemblies.Add(typeof(ActivityGrainCallFilterOptions).Assembly);
+            options.AllowedAssemblies.Add(typeof(LoggingGrainCallFilterOptions).Assembly);
         })
         .AddActivityPropagation()
         .AddMemoryStreams("Chat")

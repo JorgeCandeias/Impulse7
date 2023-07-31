@@ -1,5 +1,6 @@
 using Impulse.Data.InMemory;
 using Impulse.Data.SqlServer;
+using Impulse.WebApi.Middleware;
 using Impulse.WebApi.Models;
 using Orleans.Configuration;
 
@@ -61,9 +62,11 @@ else
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<RequestContextMiddleware>();
 
 var app = builder.Build();
 
+app.UseMiddleware<RequestContextMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();

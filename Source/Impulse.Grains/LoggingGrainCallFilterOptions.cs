@@ -1,6 +1,6 @@
 ﻿namespace Impulse.Grains;
 
-public class ActivityGrainCallFilterOptions
+public class LoggingGrainCallFilterOptions
 {
     public ISet<Assembly> AllowedAssemblies { get; } = new HashSet<Assembly>();
 }
