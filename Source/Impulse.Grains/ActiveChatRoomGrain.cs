@@ -74,7 +74,7 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain, IRemin
         {
             await WriteStateAsync();
 
-            await _stream.OnNextAsync(new ChatMessage(Guid.Empty, _name, "System", $"{user} joined chat room {_name}"));
+            await _stream.OnNextAsync(new ChatMessage(Guid.Empty, _name, "System", $"{user.Name} joined chat room {_name}"));
         }
     }
 
@@ -86,7 +86,7 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain, IRemin
         {
             await WriteStateAsync();
 
-            await _stream.OnNextAsync(new ChatMessage(Guid.NewGuid(), _name, "System", $"{user} left chat room {_name}"));
+            await _stream.OnNextAsync(new ChatMessage(Guid.NewGuid(), _name, "System", $"{user.Name} left chat room {_name}"));
         }
 
         if (_state.State.Users.Count == 0)

@@ -24,6 +24,6 @@ public static class ActiveChatRoomGrainFactoryExtensions
         Guard.IsNotNull(factory);
         Guard.IsNotNullOrWhiteSpace(room);
 
-        return factory.GetGrain<IActiveChatRoomGrain>(room.Trim().ToUpperInvariant());
+        return factory.GetGrain<IActiveChatRoomGrain>(room);
     }
 }

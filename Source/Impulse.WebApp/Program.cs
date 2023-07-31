@@ -11,6 +11,13 @@ builder.Configuration.AddJsonFile(Path.Combine(AppDomain.CurrentDomain.BaseDirec
 // link up the environment to a configuration key
 builder.Environment.EnvironmentName = builder.Configuration["Environment"]!;
 
+// add services for all environments
+builder.Services.AddOrleansClient(orleans =>
+{
+    orleans
+        .AddMemoryStreams("Chat");
+});
+
 // add development services
 if (builder.Environment.IsDevelopment())
 {
