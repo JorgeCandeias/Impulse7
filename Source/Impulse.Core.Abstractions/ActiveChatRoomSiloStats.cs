@@ -7,8 +7,8 @@ namespace Impulse.Core;
 /// </summary>
 [Immutable]
 [GenerateSerializer]
-public record ChatRoomSiloStats(
-    [property: Id(1)] SiloAddress Silo,
+public record ActiveChatRoomSiloStats(
+    [property: Id(1)] SiloAddress SiloAddress,
     [property: Id(2)] int RoomCount,
     [property: Id(3)] int UserCount,
     [property: Id(4)] int MessageCount);

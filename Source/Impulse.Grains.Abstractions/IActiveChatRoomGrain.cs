@@ -2,7 +2,7 @@
 
 namespace Impulse.Grains;
 
-public interface IChatRoomGrain : IGrainWithStringKey
+public interface IActiveChatRoomGrain : IGrainWithStringKey
 {
     Task Join(ChatUser user);
 
@@ -17,13 +17,13 @@ public interface IChatRoomGrain : IGrainWithStringKey
     Task<ImmutableArray<ChatUser>> GetUsers();
 }
 
-public static class ChatRoomGrainFactoryExtensions
+public static class ActiveChatRoomGrainFactoryExtensions
 {
-    public static IChatRoomGrain GetChatRoomGrain(this IGrainFactory factory, string room)
+    public static IActiveChatRoomGrain GetActiveChatRoomGrain(this IGrainFactory factory, string room)
     {
         Guard.IsNotNull(factory);
         Guard.IsNotNullOrWhiteSpace(room);
 
-        return factory.GetGrain<IChatRoomGrain>(room);
+        return factory.GetGrain<IActiveChatRoomGrain>(room.Trim().ToUpperInvariant());
     }
 }

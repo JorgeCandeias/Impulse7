@@ -1,23 +1,19 @@
 ﻿using Impulse.Core;
 using Impulse.Core.Extensions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Orleans.Concurrency;
-using Orleans.Streams;
 
 namespace Impulse.Grains;
 
 [Reentrant]
-internal partial class ChatRoomGrain : Grain, IChatRoomGrain, IRemindable
+internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain, IRemindable
 {
     private readonly ILogger _logger;
-    private readonly ChatRoomOptions _options;
-    private readonly IPersistentState<ChatRoomGrainState> _state;
+    private readonly ActiveChatRoomOptions _options;
+    private readonly IPersistentState<ActiveChatRoomGrainState> _state;
 
-    public ChatRoomGrain(
-        ILogger<ChatRoomGrain> logger,
-        IOptions<ChatRoomOptions> options,
-        [PersistentState("State")] IPersistentState<ChatRoomGrainState> state)
+    public ActiveChatRoomGrain(
+        ILogger<ActiveChatRoomGrain> logger,
+        IOptions<ActiveChatRoomOptions> options,
+        [PersistentState("State")] IPersistentState<ActiveChatRoomGrainState> state)
     {
         _logger = logger;
         _options = options.Value;
@@ -30,7 +26,7 @@ internal partial class ChatRoomGrain : Grain, IChatRoomGrain, IRemindable
 
     private IGrainReminder _reminder = null!;
 
-    private const string GrainType = nameof(ChatRoomGrain);
+    private const string GrainType = nameof(ActiveChatRoomGrain);
 
     public override async Task OnActivateAsync(CancellationToken cancellationToken = default)
     {
@@ -49,7 +45,7 @@ internal partial class ChatRoomGrain : Grain, IChatRoomGrain, IRemindable
 
     private Task TickLogStatsTimer(object _)
     {
-        LogStats(nameof(ChatRoomGrain), _name, _state.State.Users.Count, _state.State.Messages.Count);
+        LogStats(nameof(ActiveChatRoomGrain), _name, _state.State.Users.Count, _state.State.Messages.Count);
 
         return Task.CompletedTask;
     }
@@ -57,8 +53,8 @@ internal partial class ChatRoomGrain : Grain, IChatRoomGrain, IRemindable
     private Task TickPublishStatsTimer(object _)
     {
         return GrainFactory
-            .GetChatRoomLocalStatsGrain()
-            .Publish(new ChatRoomStats(_name, _state.State.Users.Count, _state.State.Messages.Count));
+            .GetActiveChatRoomLocalStatsGrain()
+            .Publish(new ActiveChatRoomStats(_name, _state.State.Users.Count, _state.State.Messages.Count));
     }
 
     public override async Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
@@ -229,7 +225,7 @@ internal partial class ChatRoomGrain : Grain, IChatRoomGrain, IRemindable
 }
 
 [GenerateSerializer]
-internal class ChatRoomGrainState
+internal class ActiveChatRoomGrainState
 {
     [Id(1)]
     public Queue<ChatMessage> Messages { get; } = new();

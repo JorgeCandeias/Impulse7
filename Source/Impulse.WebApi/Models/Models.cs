@@ -33,3 +33,8 @@ public record ChatMessageResponse(
     DateTimeOffset Created,
     DateTimeOffset Updated,
     Guid ETag);
+
+public record ActiveChatRoomAddMessageRequest(
+    [Required] string Room,
+    [Required] string User,
+    [Required] string Text);

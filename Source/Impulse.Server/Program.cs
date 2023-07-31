@@ -73,7 +73,8 @@ if (builder.Environment.IsDevelopment())
         orleans
             .UseLocalhostClustering(ports.Silo, ports.Gateway, new IPEndPoint(IPAddress.Loopback, ports.Primary))
             .AddMemoryGrainStorageAsDefault()
-            .AddMemoryGrainStorage("PubSubStore");
+            .AddMemoryGrainStorage("PubSubStore")
+            .UseInMemoryReminderService();
     });
 
     builder.Services.AddInMemoryRepositories();

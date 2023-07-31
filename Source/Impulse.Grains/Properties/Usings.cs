@@ -1,6 +1,10 @@
 ﻿global using CommunityToolkit.Diagnostics;
 global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Logging;
+global using Microsoft.Extensions.Options;
+global using Orleans.Concurrency;
 global using Orleans.Runtime;
+global using Orleans.Streams;
 global using System.Collections.Immutable;
 global using System.Diagnostics;
 global using System.Reflection;
