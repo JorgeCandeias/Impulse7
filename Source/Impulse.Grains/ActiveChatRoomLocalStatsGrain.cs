@@ -21,7 +21,7 @@ internal partial class ActiveChatRoomLocalStatsGrain : Grain, IActiveChatRoomLoc
 
     public override Task OnActivateAsync(CancellationToken cancellationToken)
     {
-        RegisterTimer(_ => LogStats(), null!, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+        RegisterTimer(_ => LogStats(), null!, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
 
         RegisterTimer(_ => Cleanup(), null!, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
 

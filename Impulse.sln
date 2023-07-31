@@ -38,6 +38,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Source\appsettings.global.json = Source\appsettings.global.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impulse.LoadTester", "Tests\Impulse.LoadTester\Impulse.LoadTester.csproj", "{8C6FBB66-4B6A-4000-AAD9-4E51EE96F04A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +104,10 @@ Global
 		{85FE6382-FB8A-4299-9EF9-27E42A02BC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85FE6382-FB8A-4299-9EF9-27E42A02BC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85FE6382-FB8A-4299-9EF9-27E42A02BC6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C6FBB66-4B6A-4000-AAD9-4E51EE96F04A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C6FBB66-4B6A-4000-AAD9-4E51EE96F04A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C6FBB66-4B6A-4000-AAD9-4E51EE96F04A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C6FBB66-4B6A-4000-AAD9-4E51EE96F04A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -79,6 +79,7 @@ if (builder.Environment.IsDevelopment())
     builder.Services.AddInMemoryRepositories();
 
     // add telemetry exporters for development
+    /*
     builder.Services
         .AddOpenTelemetry()
         .WithTracing(options =>
@@ -91,6 +92,7 @@ if (builder.Environment.IsDevelopment())
                     x.Targets = ConsoleExporterOutputTargets.Console | ConsoleExporterOutputTargets.Debug;
                 });
         });
+    */
 }
 
 // add services for production

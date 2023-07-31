@@ -22,7 +22,7 @@ internal partial class ActiveChatRoomGlobalStatsGrain : Grain, IActiveChatRoomGl
 
     public override Task OnActivateAsync(CancellationToken cancellationToken)
     {
-        RegisterTimer(_ => LogStatsAsync(), null!, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+        RegisterTimer(_ => LogStats(), null!, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
 
         RegisterTimer(_ => Cleanup(), null!, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
 
@@ -103,7 +103,7 @@ internal partial class ActiveChatRoomGlobalStatsGrain : Grain, IActiveChatRoomGl
         return Task.CompletedTask;
     }
 
-    private Task LogStatsAsync()
+    private Task LogStats()
     {
         LogStats(nameof(ActiveChatRoomGlobalStatsGrain), _users, _messages);
 
