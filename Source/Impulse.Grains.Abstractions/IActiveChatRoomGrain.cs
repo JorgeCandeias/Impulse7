@@ -10,10 +10,8 @@ public interface IActiveChatRoomGrain : IGrainWithStringKey
 
     Task Message(ChatMessage message);
 
-    [AlwaysInterleave]
     Task<ImmutableArray<ChatMessage>> GetMessages();
 
-    [AlwaysInterleave]
     Task<ImmutableArray<ChatUser>> GetUsers();
 }
 

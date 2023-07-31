@@ -1,7 +1,64 @@
-﻿using Impulse.Core;
+﻿#define VERSION_1
+//#define VERSION_10
+
+using Impulse.Core;
 using Impulse.Core.Extensions;
 
 namespace Impulse.Grains;
+
+#if VERSION_1
+
+internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
+{
+    private readonly Queue<ChatMessage> _messages = new();
+    private readonly Dictionary<string, ChatUser> _users = new();
+
+    public Task Join(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        _users[user.Name] = user;
+
+        return Task.CompletedTask;
+    }
+
+    public Task Leave(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        _users.Remove(user.Name);
+
+        return Task.CompletedTask;
+    }
+
+    public Task Message(ChatMessage message)
+    {
+        Guard.IsNotNull(message);
+
+        _messages.Enqueue(message);
+
+        if (_messages.Count > 10)
+        {
+            _messages.Dequeue();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task<ImmutableArray<ChatMessage>> GetMessages()
+    {
+        return _messages.ToImmutableArray().AsTaskResult();
+    }
+
+    public Task<ImmutableArray<ChatUser>> GetUsers()
+    {
+        return _users.Values.ToImmutableArray().AsTaskResult();
+    }
+}
+
+#endif
+
+#if VERSION_10
 
 [Reentrant]
 internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain, IRemindable
@@ -223,6 +280,8 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain, IRemin
 
     #endregion Logging
 }
+
+#endif
 
 [GenerateSerializer]
 internal class ActiveChatRoomGrainState
