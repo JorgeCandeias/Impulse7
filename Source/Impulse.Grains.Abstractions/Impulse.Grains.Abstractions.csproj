@@ -6,11 +6,12 @@
 		<Nullable>enable</Nullable>
 		<AssemblyName>Impulse.Grains.Abstractions</AssemblyName>
 		<RootNamespace>Impulse.Grains</RootNamespace>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.2.1" />
-	  <PackageReference Include="Microsoft.Orleans.Sdk" Version="7.2.1" />
+		<PackageReference Include="CommunityToolkit.Diagnostics" Version="8.2.1" />
+		<PackageReference Include="Microsoft.Orleans.Sdk" Version="7.2.1" />
 	</ItemGroup>
 
 	<ItemGroup>
