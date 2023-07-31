@@ -5,6 +5,8 @@ namespace Impulse.Grains;
 public interface IActiveChatRoomLocalStatsGrain : IGrainWithStringKey
 {
     Task Publish(ActiveChatRoomStats stats);
+
+    Task<ActiveChatRoomSiloStats> GetStats();
 }
 
 public static class ActiveChatRoomLocalStatsGrainFactoryExtensions

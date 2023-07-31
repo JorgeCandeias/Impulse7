@@ -19,5 +19,10 @@ internal class ApiModelsProfile : Profile
             .ForCtorParam(nameof(ChatMessage.Guid), x => x.MapFrom(y => Guid.NewGuid()))
             .ForCtorParam(nameof(ChatMessage.Created), x => x.MapFrom(y => DateTimeOffset.UtcNow))
             .ForCtorParam(nameof(ChatMessage.Updated), x => x.MapFrom(y => DateTimeOffset.UtcNow));
+
+        CreateMap<ActiveChatRoomSiloStats, ActiveChatRoomSiloStatsResponse>()
+            .ForCtorParam(nameof(ActiveChatRoomSiloStatsResponse.SiloAddress), x => x.MapFrom(y => y.SiloAddress.ToParsableString()));
+
+        CreateMap<ActiveChatRoomClusterStats, ActiveChatRoomClusterStatsResponse>();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Impulse.Core;
+using Impulse.Core.Extensions;
 
 namespace Impulse.Grains;
 
@@ -27,6 +28,13 @@ internal partial class ActiveChatRoomLocalStatsGrain : Grain, IActiveChatRoomLoc
         RegisterTimer(_ => Push(), null!, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
 
         return Task.CompletedTask;
+    }
+
+    public Task<ActiveChatRoomSiloStats> GetStats()
+    {
+        var stats = new ActiveChatRoomSiloStats(_siloAddress, _stats.Count, _users, _messages);
+
+        return stats.AsTaskResult();
     }
 
     public Task Publish(ActiveChatRoomStats stats)

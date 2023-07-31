@@ -38,3 +38,15 @@ public record ActiveChatRoomAddMessageRequest(
     [Required] string Room,
     [Required] string User,
     [Required] string Text);
+
+public record ActiveChatRoomSiloStatsResponse(
+    string SiloAddress,
+    int RoomCount,
+    int UserCount,
+    int MessageCount);
+
+public record ActiveChatRoomClusterStatsResponse(
+    int SiloCount,
+    int RoomCount,
+    int UserCount,
+    int MessageCount);
