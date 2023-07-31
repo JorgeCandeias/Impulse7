@@ -19,24 +19,7 @@ builder.Configuration.AddJsonFile("appsettings.global.json", false);
 // link up the environment to a configuration key
 builder.Environment.EnvironmentName = builder.Configuration["Environment"]!;
 
-// add appropriate loggers per environment
-builder.Logging.ClearProviders();
-if (builder.Environment.IsDevelopment())
-{
-    // the console logger must only run in development due its performance impact
-    builder.Logging.AddSerilog(new LoggerConfiguration()
-        .MinimumLevel.Information()
-        .Filter.ByExcluding(x => x.Properties.TryGetValue("SourceContext", out var property) && property is ScalarValue value && value.Value is string str && str == "Orleans.Runtime.SiloControl" && x.Level <= LogEventLevel.Information)
-        .Filter.ByExcluding(x => x.Properties.TryGetValue("SourceContext", out var property) && property is ScalarValue value && value.Value is string str && str == "Orleans.Runtime.Management.ManagementGrain" && x.Level <= LogEventLevel.Information)
-        .WriteTo.Console()
-        .CreateLogger());
-}
-else
-{
-    // add production loggers
-}
-
-// add orleans services for any environment
+// add orleans services for all environments
 builder.UseOrleans(orleans =>
 {
     orleans
@@ -65,9 +48,24 @@ builder.UseOrleans(orleans =>
     */
 });
 
-// add orleans and other services as appropriate for each environment
+// add open telemetry services for all environments
+builder.Services.AddSingleton(sp => new ActivitySource(nameof(Impulse)));
+
+// add services for development
 if (builder.Environment.IsDevelopment())
 {
+    // the console logger must only run in development due its performance impact
+    builder.Logging.ClearProviders();
+
+    // add serilog while exluding chatty sources
+    builder.Logging.AddSerilog(new LoggerConfiguration()
+        .MinimumLevel.Information()
+        .Filter.ByExcluding(x => x.Properties.TryGetValue("SourceContext", out var property) && property is ScalarValue value && value.Value is string str && str == "Orleans.Runtime.SiloControl" && x.Level <= LogEventLevel.Information)
+        .Filter.ByExcluding(x => x.Properties.TryGetValue("SourceContext", out var property) && property is ScalarValue value && value.Value is string str && str == "Orleans.Runtime.Management.ManagementGrain" && x.Level <= LogEventLevel.Information)
+        .WriteTo.Console()
+        .CreateLogger());
+
+    // add orleans with in-memory services for development
     builder.UseOrleans(orleans =>
     {
         orleans
@@ -77,10 +75,31 @@ if (builder.Environment.IsDevelopment())
             .UseInMemoryReminderService();
     });
 
+    // add in-memory repositories for development
     builder.Services.AddInMemoryRepositories();
+
+    // add telemetry exporters for development
+    builder.Services
+        .AddOpenTelemetry()
+        .WithTracing(options =>
+        {
+            options
+                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(nameof(Impulse)))
+                .AddSource(nameof(Impulse))
+                .AddConsoleExporter(x =>
+                {
+                    x.Targets = ConsoleExporterOutputTargets.Console | ConsoleExporterOutputTargets.Debug;
+                });
+        });
 }
+
+// add services for production
 else
 {
+    // add production loggers
+    builder.Logging.ClearProviders();
+
+    // add orleans with sql services for production
     builder.UseOrleans(orleans =>
     {
         orleans
@@ -112,35 +131,14 @@ else
             });
     });
 
+    // add sql repositories for production
     builder.Services.AddSqlRepositories(options =>
     {
         options.ConnectionString = builder.Configuration.GetConnectionString("Application")!;
     });
-}
 
-// add open telemetry services for all environments
-builder.Services.AddSingleton(sp => new ActivitySource(nameof(Impulse)));
-
-// add open telemetry as appropriate for each environment
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services
-        .AddOpenTelemetry()
-        .WithTracing(options =>
-        {
-            options
-                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(nameof(Impulse)))
-                .AddSource(nameof(Impulse))
-                .AddConsoleExporter(x =>
-                {
-                    x.Targets = ConsoleExporterOutputTargets.Console | ConsoleExporterOutputTargets.Debug;
-                });
-        });
-}
-else
-{
-    builder.Services
-        .AddOpenTelemetry();
+    // add telemetry for production
+    builder.Services.AddOpenTelemetry();
 }
 
 using var host = builder.Build();
