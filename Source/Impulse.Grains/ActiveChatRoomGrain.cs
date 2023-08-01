@@ -1,8 +1,6 @@
-﻿#define VERSION_1
+﻿//#define VERSION_1
+#define VERSION_2
 //#define VERSION_10
-
-using Impulse.Models;
-using Impulse.Models.Extensions;
 
 namespace Impulse.Grains;
 
@@ -54,6 +52,80 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
     {
         return _users.Values.ToImmutableArray().AsTaskResult();
     }
+}
+
+#endif
+
+#if VERSION_2
+
+internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
+{
+    public ActiveChatRoomGrain(ILogger<ActiveChatRoomGrain> logger)
+    {
+        _logger = logger;
+    }
+
+    private readonly ILogger _logger;
+
+    private readonly Queue<ChatMessage> _messages = new();
+
+    private readonly Dictionary<string, ChatUser> _users = new();
+
+    private string _name = "";
+
+    public override Task OnActivateAsync(CancellationToken cancellationToken)
+    {
+        _name = this.GetPrimaryKeyString();
+
+        LogActivated(nameof(ActiveChatRoomGrain), _name);
+
+        return Task.CompletedTask;
+    }
+
+    public Task Join(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        _users[user.Name] = user;
+
+        return Task.CompletedTask;
+    }
+
+    public Task Leave(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        _users.Remove(user.Name);
+
+        return Task.CompletedTask;
+    }
+
+    public Task Message(ChatMessage message)
+    {
+        Guard.IsNotNull(message);
+
+        _messages.Enqueue(message);
+
+        if (_messages.Count > 10)
+        {
+            _messages.Dequeue();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task<ImmutableArray<ChatMessage>> GetMessages()
+    {
+        return _messages.ToImmutableArray().AsTaskResult();
+    }
+
+    public Task<ImmutableArray<ChatUser>> GetUsers()
+    {
+        return _users.Values.ToImmutableArray().AsTaskResult();
+    }
+
+    [LoggerMessage(2, LogLevel.Information, "{GrainType} {Key} activated")]
+    public partial void LogActivated(string grainType, string key);
 }
 
 #endif
@@ -273,7 +345,7 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain, IRemin
     public partial void LogStats(string grainType, string key, int userCount, int messageCount);
 
     [LoggerMessage(2, LogLevel.Information, "{GrainType} {Key} activated with trace {TraceId} from client {ClientId}")]
-    public partial void LogActived(string grainType, string key, object traceId, object clientId);
+    public partial void LogActivated(string grainType, string key, object traceId, object clientId);
 
     [LoggerMessage(3, LogLevel.Information, "{GrainType} {Key} deactivated due to {Reason}")]
     public partial void LogDeactivated(string grainType, string key, DeactivationReason reason);
