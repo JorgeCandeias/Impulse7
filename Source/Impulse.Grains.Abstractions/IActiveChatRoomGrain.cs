@@ -1,6 +1,4 @@
-﻿using Impulse.Models;
-
-namespace Impulse.Grains;
+﻿namespace Impulse.Grains;
 
 public interface IActiveChatRoomGrain : IGrainWithStringKey
 {

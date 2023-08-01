@@ -1,3 +1,3 @@
 ﻿global using CommunityToolkit.Diagnostics;
-global using Orleans.Concurrency;
+global using Impulse.Models;
 global using System.Collections.Immutable;
