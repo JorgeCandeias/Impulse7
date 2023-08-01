@@ -41,9 +41,15 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
         return Task.CompletedTask;
     }
 
-    public ValueTask<IEnumerable<ChatMessage>> GetMessages() => _messages.AsEnumerable().AsValueTaskResult();
+    public ValueTask<IEnumerable<ChatMessage>> GetMessages()
+    {
+        return _messages.AsEnumerable().AsValueTaskResult();
+    }
 
-    public ValueTask<IEnumerable<ChatUser>> GetUsers() => _users.Values.AsEnumerable().AsValueTaskResult();
+    public ValueTask<IEnumerable<ChatUser>> GetUsers()
+    {
+        return _users.Values.AsEnumerable().AsValueTaskResult();
+    }
 }
 
 #endif
