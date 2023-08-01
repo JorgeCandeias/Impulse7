@@ -1,6 +1,7 @@
 ﻿//#define VERSION_1
 //#define VERSION_2
 #define VERSION_3
+//#define VERSION_4
 
 namespace Impulse.Grains;
 
@@ -196,6 +197,83 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
     public ValueTask<IEnumerable<ChatUser>> GetUsers()
     {
         return _users.Values.ToImmutableArray().AsEnumerable().AsValueTaskResult();
+    }
+
+    [LoggerMessage(2, LogLevel.Information, "{GrainType} {Key} activated")]
+    public partial void LogActivated(string grainType, string key);
+}
+
+#endif
+
+#if VERSION_4
+
+internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
+{
+    public ActiveChatRoomGrain(ILogger<ActiveChatRoomGrain> logger)
+    {
+        _logger = logger;
+    }
+
+    private readonly ILogger _logger;
+
+    private ImmutableQueue<ChatMessage> _messages = ImmutableQueue<ChatMessage>.Empty;
+    private int _count;
+
+    private readonly ImmutableDictionary<string, ChatUser>.Builder _users = ImmutableDictionary.CreateBuilder<string, ChatUser>();
+
+    private string _name = "";
+
+    public override Task OnActivateAsync(CancellationToken cancellationToken)
+    {
+        _name = this.GetPrimaryKeyString();
+
+        LogActivated(nameof(ActiveChatRoomGrain), _name);
+
+        return Task.CompletedTask;
+    }
+
+    public Task Join(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        _users[user.Name] = user;
+
+        return Task.CompletedTask;
+    }
+
+    public Task Leave(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        _users.Remove(user.Name);
+
+        return Task.CompletedTask;
+    }
+
+    public Task Message(ChatMessage message)
+    {
+        Guard.IsNotNull(message);
+
+        _messages = _messages.Enqueue(message);
+        _count++;
+
+        if (_count > 10)
+        {
+            _messages = _messages.Dequeue();
+            _count--;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public ValueTask<IEnumerable<ChatMessage>> GetMessages()
+    {
+        return _messages.AsEnumerable().AsValueTaskResult();
+    }
+
+    public ValueTask<IEnumerable<ChatUser>> GetUsers()
+    {
+        return _users.ToImmutable().Values.AsValueTaskResult();
     }
 
     [LoggerMessage(2, LogLevel.Information, "{GrainType} {Key} activated")]
