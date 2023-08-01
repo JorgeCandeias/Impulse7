@@ -65,6 +65,7 @@ else
 }
 
 @code {
+
     // flag to indicate chat status
     private bool _isChatting = false;
 
@@ -170,7 +171,9 @@ else
     {
         if (_isChatting && !string.IsNullOrWhiteSpace(message))
         {
-            await _client.GetActiveChatRoomGrain(_room).Message(new ChatMessage(Guid.NewGuid(), _room, _username, message, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow));
+            await _client
+                .GetActiveChatRoomGrain(_room)
+                .Message(new ChatMessage(Guid.NewGuid(), _room, _username, message, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow));
 
             _newMessage = string.Empty;
 

@@ -1,7 +1,8 @@
 ﻿//#define VERSION_1
 //#define VERSION_2
-#define VERSION_3
+//#define VERSION_3
 //#define VERSION_4
+#define VERSION_5
 
 namespace Impulse.Grains;
 
@@ -278,6 +279,95 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
 
     [LoggerMessage(2, LogLevel.Information, "{GrainType} {Key} activated")]
     public partial void LogActivated(string grainType, string key);
+}
+
+#endif
+
+#if VERSION_5
+
+internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
+{
+    public ActiveChatRoomGrain(ILogger<ActiveChatRoomGrain> logger)
+    {
+        _logger = logger;
+    }
+
+    private readonly ILogger _logger;
+
+    private readonly Queue<ChatMessage> _messages = new();
+
+    private readonly Dictionary<string, ChatUser> _users = new();
+
+    private string _name = "";
+
+    public override Task OnActivateAsync(CancellationToken cancellationToken)
+    {
+        _name = this.GetPrimaryKeyString();
+
+        LogActivated(nameof(ActiveChatRoomGrain), _name);
+
+        return Task.CompletedTask;
+    }
+
+    public Task Join(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        _users[user.Name] = user;
+
+        return Task.CompletedTask;
+    }
+
+    public Task Leave(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        _users.Remove(user.Name);
+
+        if (_users.Count == 0)
+        {
+            DeactivateOnIdle();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task Message(ChatMessage message)
+    {
+        Guard.IsNotNull(message);
+
+        _messages.Enqueue(message);
+
+        if (_messages.Count > 10)
+        {
+            _messages.Dequeue();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public ValueTask<IEnumerable<ChatMessage>> GetMessages()
+    {
+        return _messages.ToImmutableArray().AsEnumerable().AsValueTaskResult();
+    }
+
+    public ValueTask<IEnumerable<ChatUser>> GetUsers()
+    {
+        return _users.Values.ToImmutableArray().AsEnumerable().AsValueTaskResult();
+    }
+
+    public override Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
+    {
+        LogDeactivated(nameof(ActiveChatRoomGrain), _name);
+
+        return Task.CompletedTask;
+    }
+
+    [LoggerMessage(2, LogLevel.Information, "{GrainType} {Key} activated")]
+    private partial void LogActivated(string grainType, string key);
+
+    [LoggerMessage(3, LogLevel.Information, "{GrainType} {Key} deactivated")]
+    private partial void LogDeactivated(string grainType, string key);
 }
 
 #endif
