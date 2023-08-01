@@ -1,4 +1,6 @@
-﻿#define VERSION_1
+﻿//#define VERSION_1
+//#define VERSION_2
+#define VERSION_3
 
 namespace Impulse.Grains;
 
@@ -112,14 +114,88 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
         return Task.CompletedTask;
     }
 
-    public Task<ImmutableArray<ChatMessage>> GetMessages()
+    public ValueTask<IEnumerable<ChatMessage>> GetMessages()
     {
-        return _messages.ToImmutableArray().AsTaskResult();
+        return _messages.AsEnumerable().AsValueTaskResult();
     }
 
-    public Task<ImmutableArray<ChatUser>> GetUsers()
+    public ValueTask<IEnumerable<ChatUser>> GetUsers()
     {
-        return _users.Values.ToImmutableArray().AsTaskResult();
+        return _users.Values.AsEnumerable().AsValueTaskResult();
+    }
+
+    [LoggerMessage(2, LogLevel.Information, "{GrainType} {Key} activated")]
+    public partial void LogActivated(string grainType, string key);
+}
+
+#endif
+
+#if VERSION_3
+
+internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
+{
+    public ActiveChatRoomGrain(ILogger<ActiveChatRoomGrain> logger)
+    {
+        _logger = logger;
+    }
+
+    private readonly ILogger _logger;
+
+    private readonly Queue<ChatMessage> _messages = new();
+
+    private readonly Dictionary<string, ChatUser> _users = new();
+
+    private string _name = "";
+
+    public override Task OnActivateAsync(CancellationToken cancellationToken)
+    {
+        _name = this.GetPrimaryKeyString();
+
+        LogActivated(nameof(ActiveChatRoomGrain), _name);
+
+        return Task.CompletedTask;
+    }
+
+    public Task Join(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        _users[user.Name] = user;
+
+        return Task.CompletedTask;
+    }
+
+    public Task Leave(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        _users.Remove(user.Name);
+
+        return Task.CompletedTask;
+    }
+
+    public Task Message(ChatMessage message)
+    {
+        Guard.IsNotNull(message);
+
+        _messages.Enqueue(message);
+
+        if (_messages.Count > 10)
+        {
+            _messages.Dequeue();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public ValueTask<IEnumerable<ChatMessage>> GetMessages()
+    {
+        return _messages.ToImmutableArray().AsEnumerable().AsValueTaskResult();
+    }
+
+    public ValueTask<IEnumerable<ChatUser>> GetUsers()
+    {
+        return _users.Values.ToImmutableArray().AsEnumerable().AsValueTaskResult();
     }
 
     [LoggerMessage(2, LogLevel.Information, "{GrainType} {Key} activated")]
