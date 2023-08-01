@@ -1,5 +1,5 @@
-﻿//#define VERSION_1
-#define VERSION_2
+﻿#define VERSION_1
+//#define VERSION_2
 //#define VERSION_10
 
 namespace Impulse.Grains;
