@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.WebApp", "Source\Im
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Impulse.Data.SqlServer.Database", "Source\Impulse.Data.SqlServer.Database\Impulse.Data.SqlServer.Database.sqlproj", "{A44FD354-DE82-4839-8768-EFA1C62ABC64}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.Console", "Source\Impulse.Console\Impulse.Console.csproj", "{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{73A0CA27-3B37-480A-A322-9606C82A03F7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Impulse.Data.SqlServer.Tests", "Tests\Impulse.Data.SqlServer.Tests\Impulse.Data.SqlServer.Tests.csproj", "{C340928D-6C5E-407A-950B-F9940E70D8EE}"
@@ -78,10 +76,6 @@ Global
 		{A44FD354-DE82-4839-8768-EFA1C62ABC64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A44FD354-DE82-4839-8768-EFA1C62ABC64}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A44FD354-DE82-4839-8768-EFA1C62ABC64}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB5F9388-B8F6-4F13-8A6F-0E577A9934B3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C340928D-6C5E-407A-950B-F9940E70D8EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C340928D-6C5E-407A-950B-F9940E70D8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C340928D-6C5E-407A-950B-F9940E70D8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
