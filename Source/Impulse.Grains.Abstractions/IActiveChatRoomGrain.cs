@@ -8,9 +8,9 @@ public interface IActiveChatRoomGrain : IGrainWithStringKey
 
     Task Message(ChatMessage message);
 
-    Task<ImmutableArray<ChatMessage>> GetMessages();
+    ValueTask<IEnumerable<ChatMessage>> GetMessages();
 
-    Task<ImmutableArray<ChatUser>> GetUsers();
+    ValueTask<IEnumerable<ChatUser>> GetUsers();
 }
 
 public static class ActiveChatRoomGrainFactoryExtensions

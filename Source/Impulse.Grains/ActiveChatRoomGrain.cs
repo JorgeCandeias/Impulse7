@@ -1,6 +1,4 @@
 ﻿#define VERSION_1
-//#define VERSION_2
-//#define VERSION_10
 
 namespace Impulse.Grains;
 
@@ -43,15 +41,9 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
         return Task.CompletedTask;
     }
 
-    public Task<ImmutableArray<ChatMessage>> GetMessages()
-    {
-        return _messages.ToImmutableArray().AsTaskResult();
-    }
+    public ValueTask<IEnumerable<ChatMessage>> GetMessages() => _messages.AsEnumerable().AsValueTaskResult();
 
-    public Task<ImmutableArray<ChatUser>> GetUsers()
-    {
-        return _users.Values.ToImmutableArray().AsTaskResult();
-    }
+    public ValueTask<IEnumerable<ChatUser>> GetUsers() => _users.Values.AsEnumerable().AsValueTaskResult();
 }
 
 #endif
