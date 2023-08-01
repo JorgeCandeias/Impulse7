@@ -1,4 +1,4 @@
-﻿using Impulse.Core;
+﻿using Impulse.Models;
 using Orleans.Streams;
 
 namespace Impulse.Grains.Tests;

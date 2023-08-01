@@ -1,5 +1,6 @@
-﻿using Impulse.Core.Exceptions;
-using Impulse.Data.SqlServer.Models;
+﻿using Impulse.Data.SqlServer.Models;
+using Impulse.Models;
+using Impulse.Models.Exceptions;
 
 namespace Impulse.Data.SqlServer.Repositories;
 

@@ -1,4 +1,4 @@
-﻿namespace Impulse.Core;
+﻿namespace Impulse.Models;
 
 /// <summary>
 /// Represents an individual chat message.

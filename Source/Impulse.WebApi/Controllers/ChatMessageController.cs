@@ -1,6 +1,6 @@
-﻿using Impulse.Core;
-using Impulse.Core.Exceptions;
-using Impulse.Data;
+﻿using Impulse.Data;
+using Impulse.Models;
+using Impulse.Models.Exceptions;
 using Impulse.WebApi.Models;
 
 namespace Impulse.WebApi.Controllers;

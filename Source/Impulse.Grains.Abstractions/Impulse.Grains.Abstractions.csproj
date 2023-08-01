@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Impulse.Core.Abstractions\Impulse.Core.Abstractions.csproj" />
+	  <ProjectReference Include="..\Impulse.Models\Impulse.Models.csproj" />
 	</ItemGroup>
 
 </Project>

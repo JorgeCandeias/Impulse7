@@ -1,5 +1,5 @@
-﻿using Impulse.Core;
-using Impulse.Grains;
+﻿using Impulse.Grains;
+using Impulse.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

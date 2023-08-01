@@ -1,5 +1,5 @@
-﻿using Impulse.Core.Exceptions;
-using Impulse.Grains;
+﻿using Impulse.Grains;
+using Impulse.Models.Exceptions;
 using Impulse.WebApi.Models;
 
 namespace Impulse.WebApi.Controllers;

@@ -1,4 +1,4 @@
-﻿using Impulse.Core;
+﻿using Impulse.Models;
 
 namespace Impulse.Data;
 

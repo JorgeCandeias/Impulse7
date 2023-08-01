@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Impulse.Core.Exceptions;
+﻿namespace Impulse.Models.Exceptions;
 
 [Serializable]
 [GenerateSerializer]

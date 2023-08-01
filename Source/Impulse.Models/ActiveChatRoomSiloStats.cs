@@ -1,6 +1,4 @@
-﻿using Orleans.Runtime;
-
-namespace Impulse.Core;
+﻿namespace Impulse.Models;
 
 /// <summary>
 /// Holds chat room statistics for a silo.

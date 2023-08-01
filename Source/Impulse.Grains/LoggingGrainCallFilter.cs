@@ -20,8 +20,7 @@ internal partial class LoggingGrainCallFilter : IIncomingGrainCallFilter
         }
 
         // passthrough calls without a trace id
-        var traceId = RequestContext.Get("TraceId") as string;
-        if (traceId is null)
+        if (RequestContext.Get("TraceId") is not string traceId)
         {
             return context.Invoke();
         }

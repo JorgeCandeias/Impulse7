@@ -1,4 +1,6 @@
-﻿namespace Impulse.Data.SqlServer.Models;
+﻿using Impulse.Models;
+
+namespace Impulse.Data.SqlServer.Models;
 
 internal class SqlRepositoryProfile : Profile
 {

@@ -1,5 +1,5 @@
-﻿using Impulse.Core;
-using Impulse.Core.Extensions;
+﻿using Impulse.Models;
+using Impulse.Models.Extensions;
 
 namespace Impulse.Grains;
 

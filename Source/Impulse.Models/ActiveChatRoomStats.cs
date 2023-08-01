@@ -1,4 +1,4 @@
-﻿namespace Impulse.Core;
+﻿namespace Impulse.Models;
 
 /// <summary>
 /// Holds statistics for a chat room.

@@ -1,5 +1,5 @@
-﻿using Impulse.Core;
-using Impulse.Grains;
+﻿using Impulse.Grains;
+using Impulse.Models;
 using Impulse.WebApi.Models;
 
 namespace Impulse.WebApi.Controllers;

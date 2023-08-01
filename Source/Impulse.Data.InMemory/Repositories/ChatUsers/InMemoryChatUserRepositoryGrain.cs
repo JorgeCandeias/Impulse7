@@ -1,7 +1,6 @@
-﻿using Impulse.Core;
-using Impulse.Core.Exceptions;
-using Impulse.Core.Extensions;
-using System.Collections.Immutable;
+﻿using Impulse.Models;
+using Impulse.Models.Exceptions;
+using Impulse.Models.Extensions;
 
 namespace Impulse.Data.InMemory.Repositories.ChatUsers;
 

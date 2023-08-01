@@ -1,4 +1,4 @@
-﻿namespace Impulse.Core.Extensions;
+﻿namespace Impulse.Models.Extensions;
 
 public static class ObjectTaskExtensions
 {
