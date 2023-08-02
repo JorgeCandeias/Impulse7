@@ -19,17 +19,17 @@ internal partial class LoggingGrainCallFilter : IIncomingGrainCallFilter
             return context.Invoke();
         }
 
-        // passthrough calls without a trace id
-        if (RequestContext.Get("TraceId") is not string traceId)
+        // passthrough calls without an activity id
+        if (RequestContext.Get("ActivityId") is not string activityId)
         {
             return context.Invoke();
         }
 
         // otherwise handle the call
-        return InvokeCore(traceId, context);
+        return InvokeCore(activityId, context);
     }
 
-    private async Task InvokeCore(string traceId, IIncomingGrainCallContext context)
+    private async Task InvokeCore(string activityId, IIncomingGrainCallContext context)
     {
         // derive a name for the activity
         var identity = (context.Grain as Grain)?.IdentityString;
@@ -44,17 +44,17 @@ internal partial class LoggingGrainCallFilter : IIncomingGrainCallFilter
         {
             await context.Invoke();
 
-            LogOK(name, traceId, started, DateTimeOffset.UtcNow, watch.Elapsed);
+            LogOK(name, activityId, started, DateTimeOffset.UtcNow, watch.Elapsed);
         }
         catch (Exception ex)
         {
-            LogFail(ex, traceId, name, started, DateTimeOffset.UtcNow, watch.Elapsed);
+            LogFail(ex, activityId, name, started, DateTimeOffset.UtcNow, watch.Elapsed);
         }
     }
 
-    [LoggerMessage(1, LogLevel.Information, "Method {Method} with trace {TraceId} started at {Started} and completed at {Completed} taking {Elapsed}")]
-    private partial void LogOK(string method, object traceId, DateTimeOffset started, DateTimeOffset completed, TimeSpan elapsed);
+    [LoggerMessage(1, LogLevel.Information, "Method {Method} with activity {ActivityId} started at {Started} and completed at {Completed} taking {Elapsed}")]
+    private partial void LogOK(string method, object activityId, DateTimeOffset started, DateTimeOffset completed, TimeSpan elapsed);
 
-    [LoggerMessage(2, LogLevel.Error, "Method {Method} with trace {TraceId} started at {Started} and completed at {Completed} taking {Elapsed}")]
-    private partial void LogFail(Exception ex, object method, string traceId, DateTimeOffset started, DateTimeOffset completed, TimeSpan elapsed);
+    [LoggerMessage(2, LogLevel.Error, "Method {Method} with trace {ActivityId} started at {Started} and completed at {Completed} taking {Elapsed}")]
+    private partial void LogFail(Exception ex, object method, string activityId, DateTimeOffset started, DateTimeOffset completed, TimeSpan elapsed);
 }
