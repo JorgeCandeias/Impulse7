@@ -1,7 +1,6 @@
 ﻿using Impulse.Data.InMemory.Repositories.ChatMessages;
 using Impulse.Data.InMemory.Repositories.ChatRooms;
 using Impulse.Data.InMemory.Repositories.ChatUsers;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Impulse.Data.InMemory;
 

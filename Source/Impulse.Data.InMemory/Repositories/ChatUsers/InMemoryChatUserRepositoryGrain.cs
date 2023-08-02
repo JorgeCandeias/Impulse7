@@ -1,8 +1,4 @@
-﻿using Impulse.Models;
-using Impulse.Models.Exceptions;
-using Impulse.Models.Extensions;
-
-namespace Impulse.Data.InMemory.Repositories.ChatUsers;
+﻿namespace Impulse.Data.InMemory.Repositories.ChatUsers;
 
 internal class InMemoryChatUserRepositoryGrain : Grain, IInMemoryChatUserRepositoryGrain
 {

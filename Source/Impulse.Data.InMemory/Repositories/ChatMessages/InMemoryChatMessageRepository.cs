@@ -1,6 +1,4 @@
-﻿using Impulse.Models;
-
-namespace Impulse.Data.InMemory.Repositories.ChatMessages;
+﻿namespace Impulse.Data.InMemory.Repositories.ChatMessages;
 
 internal class InMemoryChatMessageRepository : IChatMessageRepository
 {

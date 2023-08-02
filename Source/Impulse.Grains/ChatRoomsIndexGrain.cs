@@ -1,5 +1,4 @@
 ﻿using Impulse.Data;
-using Impulse.Models;
 using Impulse.Models.Exceptions;
 
 namespace Impulse.Grains;

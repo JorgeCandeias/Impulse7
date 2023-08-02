@@ -1,6 +1,4 @@
-﻿using Impulse.Models;
-
-namespace Impulse.Data.InMemory.Repositories.ChatRooms;
+﻿namespace Impulse.Data.InMemory.Repositories.ChatRooms;
 
 internal class InMemoryChatRoomRepository : IChatRoomRepository
 {
