@@ -9,7 +9,8 @@
 //#define VERSION_9
 //#define VERSION_10
 //#define VERSION_11
-#define VERSION_12
+//#define VERSION_12
+#define VERSION_13
 
 namespace Impulse.Grains;
 
@@ -1174,7 +1175,162 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain, IRemin
         await _stream.OnNextAsync(saved);
     }
 
-    #region Hide
+    public ValueTask<IEnumerable<ChatMessage>> GetMessages()
+    {
+        return _messages.ToImmutableArray().AsEnumerable().AsValueTaskResult();
+    }
+
+    public ValueTask<IEnumerable<ChatUser>> GetUsers()
+    {
+        return _state.State.Users.Values.ToImmutableArray().AsEnumerable().AsValueTaskResult();
+    }
+
+    public override async Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
+    {
+        await this.UnregisterReminder(_reminder);
+
+        LogDeactivated(nameof(ActiveChatRoomGrain), _name);
+    }
+
+    private Task TickLogStats(object state)
+    {
+        LogStats(nameof(ActiveChatRoomGrain), _name, _state.State.Users.Count, _messages.Count);
+
+        return Task.CompletedTask;
+    }
+
+    public Task ReceiveReminder(string reminderName, TickStatus status)
+    {
+        switch (reminderName)
+        {
+            case "KeepAlive":
+                LogKeepAlive(nameof(ActiveChatRoomGrain), _name);
+                break;
+
+            default:
+                break;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    [LoggerMessage(2, LogLevel.Information, "{GrainType} {Key} activated")]
+    private partial void LogActivated(string grainType, string key);
+
+    [LoggerMessage(3, LogLevel.Information, "{GrainType} {Key} deactivated")]
+    private partial void LogDeactivated(string grainType, string key);
+
+    [LoggerMessage(4, LogLevel.Information, "{GrainType} {Key} is active with {UserCount} users and is caching {MessageCount} messages")]
+    private partial void LogStats(string grainType, string key, int userCount, int messageCount);
+
+    [LoggerMessage(5, LogLevel.Information, "{GrainType} {Key} received keep alive")]
+    private partial void LogKeepAlive(string grainType, string key);
+
+    [LoggerMessage(6, LogLevel.Information, "{GrainType} {Key} received message from activity {ActivityId}")]
+    private partial void LogMessage(string grainType, string key, object activityId);
+}
+
+#endif
+
+#if VERSION_13
+
+[GenerateSerializer]
+internal class ActiveChatRoomGrainState
+{
+    [Id(2)]
+    public Dictionary<string, ChatUser> Users { get; } = new();
+}
+
+[Reentrant]
+internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain, IRemindable
+{
+    public ActiveChatRoomGrain(
+        ILogger<ActiveChatRoomGrain> logger,
+        IOptions<ActiveChatRoomOptions> options,
+        [PersistentState("State")] IPersistentState<ActiveChatRoomGrainState> state,
+        IChatRoomRepository roomRepository,
+        IChatMessageRepository messageRepository)
+    {
+        _logger = logger;
+        _options = options.Value;
+        _state = state;
+        _roomRepository = roomRepository;
+        _messageRepository = messageRepository;
+    }
+
+    private readonly ILogger _logger;
+    private readonly ActiveChatRoomOptions _options;
+    private readonly IPersistentState<ActiveChatRoomGrainState> _state;
+    private readonly IChatRoomRepository _roomRepository;
+    private readonly IChatMessageRepository _messageRepository;
+
+    private string _name = "";
+    private ChatRoom _room = null!;
+    private readonly Queue<ChatMessage> _messages = new();
+    private IAsyncStream<ChatMessage> _stream = null!;
+    private IGrainReminder _reminder = null!;
+
+    public override async Task OnActivateAsync(CancellationToken cancellationToken)
+    {
+        _name = this.GetPrimaryKeyString();
+
+        _room = await GrainFactory.GetChatRoomsIndexGrain().GetOrAdd(_name);
+
+        _stream = this.GetStreamProvider("Chat").GetStream<ChatMessage>(_name);
+
+        _reminder = await this.RegisterOrUpdateReminder("KeepAlive", TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
+
+        RegisterTimer(TickLogStats, null!, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(10));
+
+        LogActivated(nameof(ActiveChatRoomGrain), _name);
+    }
+
+    public async Task Join(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        if (_state.State.Users.TryAdd(user.Name, user))
+        {
+            await WriteStateAsync();
+
+            await _stream.OnNextAsync(new ChatMessage(Guid.Empty, _name, "System", $"{user.Name} joined chat room {_name}"));
+        }
+    }
+
+    public async Task Leave(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        if (_state.State.Users.Remove(user.Name))
+        {
+            await WriteStateAsync();
+
+            await _stream.OnNextAsync(new ChatMessage(Guid.NewGuid(), _name, "System", $"{user.Name} left chat room {_name}"));
+        }
+
+        if (_state.State.Users.Count == 0)
+        {
+            DeactivateOnIdle();
+        }
+    }
+
+    public async Task Message(ChatMessage message)
+    {
+        Guard.IsNotNull(message);
+
+        LogMessage(nameof(ActiveChatRoomGrain), _name, RequestContext.Get("ActivityId"));
+
+        var saved = await _messageRepository.Save(message);
+
+        _messages.Enqueue(saved);
+
+        if (_messages.Count > _options.MaxCachedMessages)
+        {
+            _messages.Dequeue();
+        }
+
+        await _stream.OnNextAsync(saved);
+    }
 
     public ValueTask<IEnumerable<ChatMessage>> GetMessages()
     {
@@ -1227,158 +1383,8 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain, IRemin
     [LoggerMessage(5, LogLevel.Information, "{GrainType} {Key} received keep alive")]
     private partial void LogKeepAlive(string grainType, string key);
 
-    #endregion
-
     [LoggerMessage(6, LogLevel.Information, "{GrainType} {Key} received message from activity {ActivityId}")]
     private partial void LogMessage(string grainType, string key, object activityId);
-}
-
-#endif
-
-
-#if VERSION_100
-
-[Reentrant]
-internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain, IRemindable
-{
-    private readonly ILogger _logger;
-    private readonly ActiveChatRoomOptions _options;
-    private readonly IPersistentState<ActiveChatRoomGrainState> _state;
-
-    public ActiveChatRoomGrain(
-        ILogger<ActiveChatRoomGrain> logger,
-        IOptions<ActiveChatRoomOptions> options,
-        [PersistentState("State")] IPersistentState<ActiveChatRoomGrainState> state)
-    {
-        _logger = logger;
-        _options = options.Value;
-        _state = state;
-    }
-
-    private string _name = null!;
-
-    private IAsyncStream<ChatMessage> _stream = null!;
-
-    private IGrainReminder _reminder = null!;
-
-    private const string GrainType = nameof(ActiveChatRoomGrain);
-
-    public override async Task OnActivateAsync(CancellationToken cancellationToken = default)
-    {
-        _name = this.GetPrimaryKeyString();
-
-        _stream = this.GetStreamProvider("Chat").GetStream<ChatMessage>(_name);
-
-        RegisterTimer(TickLogStatsTimer, null!, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
-
-        RegisterTimer(TickPublishStatsTimer, null!, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
-
-        _reminder = await this.RegisterOrUpdateReminder("Clock", TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
-
-        LogActived(GrainType, _name, RequestContext.Get("TraceId"), RequestContext.Get("ClientId"));
-    }
-
-    private Task TickLogStatsTimer(object _)
-    {
-        LogStats(nameof(ActiveChatRoomGrain), _name, _state.State.Users.Count, _state.State.Messages.Count);
-
-        return Task.CompletedTask;
-    }
-
-    private Task TickPublishStatsTimer(object _)
-    {
-        return GrainFactory
-            .GetActiveChatRoomLocalStatsGrain()
-            .Publish(new ActiveChatRoomStats(_name, _state.State.Users.Count, _state.State.Messages.Count));
-    }
-
-    public override async Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
-    {
-        await this.UnregisterReminder(_reminder);
-
-        LogDeactivated(GrainType, _name, reason);
-
-        await base.OnDeactivateAsync(reason, cancellationToken);
-    }
-
-    public async Task Join(ChatUser user)
-    {
-        Guard.IsNotNull(user);
-
-        if (_state.State.Users.TryAdd(user.Name, user))
-        {
-            await WriteStateAsync();
-
-            await _stream.OnNextAsync(new ChatMessage(Guid.Empty, _name, "System", $"{user.Name} joined chat room {_name}"));
-        }
-    }
-
-    public async Task Leave(ChatUser user)
-    {
-        Guard.IsNotNull(user);
-
-        if (_state.State.Users.Remove(user.Name))
-        {
-            await WriteStateAsync();
-
-            await _stream.OnNextAsync(new ChatMessage(Guid.NewGuid(), _name, "System", $"{user.Name} left chat room {_name}"));
-        }
-
-        if (_state.State.Users.Count == 0)
-        {
-            DeactivateOnIdle();
-        }
-    }
-
-    public async Task Message(ChatMessage message)
-    {
-        // cache the new message
-        _state.State.Messages.Enqueue(message);
-
-        // clear any excess messages
-        while (_state.State.Messages.Count > _options.MaxCachedMessages)
-        {
-            _state.State.Messages.Dequeue();
-        }
-
-        // persist all messages
-        await WriteStateAsync();
-
-        // broad the message to clients
-        await _stream.OnNextAsync(message);
-    }
-
-    public Task<ImmutableArray<ChatUser>> GetUsers()
-    {
-        return _state.State.Users.Values.ToImmutableArray().AsTaskResult();
-    }
-
-    public Task<ImmutableArray<ChatMessage>> GetMessages()
-    {
-        return _state.State.Messages.ToImmutableArray().AsTaskResult();
-    }
-
-    private Task SendClock()
-    {
-        return _stream.OnNextAsync(new ChatMessage(
-            Guid.NewGuid(),
-            _name,
-            "System", $"{DateTime.UtcNow:u}: {_name} online with {_state.State.Users.Count} members active"));
-    }
-
-    public Task ReceiveReminder(string reminderName, TickStatus status)
-    {
-        switch (reminderName)
-        {
-            case "Clock":
-                return SendClock();
-
-            default:
-                break;
-        }
-
-        return Task.CompletedTask;
-    }
 
     #region Queued Write
 
@@ -1444,19 +1450,6 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain, IRemin
     }
 
     #endregion Queued Write
-
-    #region Logging
-
-    [LoggerMessage(1, LogLevel.Information, "{GrainType} {Key} active with {UserCount} users and {MessageCount} cached messages")]
-    public partial void LogStats(string grainType, string key, int userCount, int messageCount);
-
-    [LoggerMessage(2, LogLevel.Information, "{GrainType} {Key} activated with trace {TraceId} from client {ClientId}")]
-    public partial void LogActivated(string grainType, string key, object traceId, object clientId);
-
-    [LoggerMessage(3, LogLevel.Information, "{GrainType} {Key} deactivated due to {Reason}")]
-    public partial void LogDeactivated(string grainType, string key, DeactivationReason reason);
-
-    #endregion Logging
 }
 
 #endif
