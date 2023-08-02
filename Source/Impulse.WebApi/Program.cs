@@ -18,6 +18,11 @@ builder.Services.AddAutoMapper(options =>
     options.AddProfile<ApiModelsProfile>();
 });
 
+builder.Services.AddOrleansClient(orleans =>
+{
+    orleans.AddActivityPropagation();
+});
+
 // add services for development
 if (builder.Environment.IsDevelopment())
 {

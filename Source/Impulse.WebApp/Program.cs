@@ -1,7 +1,10 @@
 using Impulse.Data.InMemory;
 using Impulse.Data.SqlServer;
 using Impulse.WebApp.Data;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Orleans.Configuration;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +17,12 @@ builder.Environment.EnvironmentName = builder.Configuration["Environment"]!;
 // add services for all environments
 builder.Services.AddOrleansClient(orleans =>
 {
-    orleans
-        .AddMemoryStreams("Chat");
+    orleans.AddMemoryStreams("Chat");
+    //orleans.AddActivityPropagation();
 });
+
+// add open telemetry source for the app
+builder.Services.AddSingleton(sp => new ActivitySource("Impulse"));
 
 // add development services
 if (builder.Environment.IsDevelopment())
@@ -28,6 +34,19 @@ if (builder.Environment.IsDevelopment())
                 .UseLocalhostClustering();
         })
         .AddInMemoryRepositories();
+
+    // add telemetry exporters for development
+    builder.Services
+        .AddOpenTelemetry()
+        .WithTracing(options =>
+        {
+            options
+                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(nameof(Impulse)))
+                //.AddSource("Impulse")
+                //.AddSource("Microsoft.Orleans.Runtime")
+                //.AddSource("Microsoft.Orleans.Application")
+                .AddConsoleExporter();
+        });
 }
 
 // add production services

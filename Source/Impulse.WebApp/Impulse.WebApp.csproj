@@ -20,6 +20,9 @@
 	  <PackageReference Include="Microsoft.Orleans.Client" Version="7.2.1" />
 	  <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="7.2.1" />
 	  <PackageReference Include="Microsoft.Orleans.Streaming" Version="7.2.1" />
+	  <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.5.1" />
+	  <PackageReference Include="OpenTelemetry.Exporter.InMemory" Version="1.5.1" />
+	  <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.5.1" />
 	</ItemGroup>
 
 	<ItemGroup>

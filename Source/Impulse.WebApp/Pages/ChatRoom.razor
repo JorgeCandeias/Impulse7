@@ -6,6 +6,7 @@
 @using System.Diagnostics;
 @inject NavigationManager _navigationManager
 @inject IClusterClient _client;
+@inject ActivitySource _source;
 @implements IAsyncDisposable
 
 <h1>Impulse 7</h1>
@@ -172,6 +173,9 @@ else
 
         if (_isChatting && !string.IsNullOrWhiteSpace(message))
         {
+            //using var activity = _source.CreateActivity($"SendChatMessage", ActivityKind.Client);
+            //activity?.Start();
+
             await _client
                 .GetActiveChatRoomGrain(_room)
                 .Message(new ChatMessage(Guid.NewGuid(), _room, _username, message, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow));

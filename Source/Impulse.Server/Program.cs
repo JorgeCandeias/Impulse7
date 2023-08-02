@@ -23,11 +23,11 @@ builder.Environment.EnvironmentName = builder.Configuration["Environment"]!;
 builder.UseOrleans(orleans =>
 {
     orleans
+        //.AddActivityPropagation()
         .AddLoggingGrainCallFilter(options =>
         {
             options.AllowedAssemblies.Add(typeof(LoggingGrainCallFilterOptions).Assembly);
         })
-        .AddActivityPropagation()
         .AddMemoryStreams("Chat")
         .UseDashboard(options =>
         {
@@ -47,9 +47,6 @@ builder.UseOrleans(orleans =>
     }
     */
 });
-
-// add open telemetry services for all environments
-builder.Services.AddSingleton(sp => new ActivitySource(nameof(Impulse)));
 
 // add services for development
 if (builder.Environment.IsDevelopment())
@@ -79,20 +76,17 @@ if (builder.Environment.IsDevelopment())
     builder.Services.AddInMemoryRepositories();
 
     // add telemetry exporters for development
-    /*
     builder.Services
         .AddOpenTelemetry()
         .WithTracing(options =>
         {
             options
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(nameof(Impulse)))
-                .AddSource(nameof(Impulse))
-                .AddConsoleExporter(x =>
-                {
-                    x.Targets = ConsoleExporterOutputTargets.Console | ConsoleExporterOutputTargets.Debug;
-                });
+                //.AddSource("Impulse")
+                //.AddSource("Microsoft.Orleans.Runtime")
+                //.AddSource("Microsoft.Orleans.Application")
+                .AddConsoleExporter();
         });
-    */
 }
 
 // add services for production
