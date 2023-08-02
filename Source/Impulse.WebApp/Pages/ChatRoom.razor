@@ -3,6 +3,7 @@
 @using Orleans.Runtime;
 @using Orleans.Streams;
 @using Impulse.Grains;
+@using System.Diagnostics;
 @inject NavigationManager _navigationManager
 @inject IClusterClient _client;
 @implements IAsyncDisposable
@@ -167,6 +168,8 @@ else
 
     private async Task SendAsync(string message)
     {
+        RequestContext.Set("ActivityId", Activity.Current?.Id);
+
         if (_isChatting && !string.IsNullOrWhiteSpace(message))
         {
             await _client

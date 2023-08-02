@@ -50,9 +50,6 @@ internal partial class LoggingGrainCallFilter : IIncomingGrainCallFilter
         {
             LogFail(ex, traceId, name, started, DateTimeOffset.UtcNow, watch.Elapsed);
         }
-
-        // measure the target under the activity
-        await context.Invoke();
     }
 
     [LoggerMessage(1, LogLevel.Information, "Method {Method} with trace {TraceId} started at {Started} and completed at {Completed} taking {Elapsed}")]
