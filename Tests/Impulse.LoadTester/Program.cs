@@ -63,7 +63,7 @@ var client = host.Services.GetRequiredService<IClusterClient>();
 var room = "overload";
 var userNames = Enumerable.Range(1, 100).Select(x => Guid.NewGuid().ToString()).ToArray();
 var messages = Enumerable.Range(1, 100).Select(x => Guid.NewGuid().ToString()).ToArray();
-var rate = 1000;
+var rate = 100;
 
 // warm up all the users in all the rooms
 foreach (var userName in userNames)
