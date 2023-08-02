@@ -111,8 +111,6 @@ else
             // remove old messages if any
             _messages.Clear();
 
-
-
             // get the user - for sample purposes we always get or create the user
             var user = await _client.GetChatUsersIndexGrain().GetOrAdd(_username);
 

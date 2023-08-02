@@ -5,9 +5,11 @@
 //#define VERSION_5
 //#define VERSION_6
 //#define VERSION_7
-#define VERSION_8
+//#define VERSION_8
+#define VERSION_9
 
 using Impulse.Data;
+using Orleans.Streams;
 
 namespace Impulse.Grains;
 
@@ -673,6 +675,125 @@ internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
 }
 
 #endif
+
+#if VERSION_9
+
+[GenerateSerializer]
+internal class ActiveChatRoomGrainState
+{
+    [Id(2)]
+    public Dictionary<string, ChatUser> Users { get; } = new();
+}
+
+internal partial class ActiveChatRoomGrain : Grain, IActiveChatRoomGrain
+{
+    public ActiveChatRoomGrain(
+        ILogger<ActiveChatRoomGrain> logger,
+        IOptions<ActiveChatRoomOptions> options,
+        [PersistentState("State")] IPersistentState<ActiveChatRoomGrainState> state,
+        IChatRoomRepository roomRepository,
+        IChatMessageRepository messageRepository)
+    {
+        _logger = logger;
+        _options = options.Value;
+        _state = state;
+        _roomRepository = roomRepository;
+        _messageRepository = messageRepository;
+    }
+
+    private readonly ILogger _logger;
+    private readonly ActiveChatRoomOptions _options;
+    private readonly IPersistentState<ActiveChatRoomGrainState> _state;
+    private readonly IChatRoomRepository _roomRepository;
+    private readonly IChatMessageRepository _messageRepository;
+
+    private string _name = "";
+    private ChatRoom _room = null!;
+    private readonly Queue<ChatMessage> _messages = new();
+    private IAsyncStream<ChatMessage> _stream = null!;
+
+    public override async Task OnActivateAsync(CancellationToken cancellationToken)
+    {
+        _name = this.GetPrimaryKeyString();
+
+        _room = await GrainFactory.GetChatRoomsIndexGrain().GetOrAdd(_name);
+
+        _stream = this.GetStreamProvider("Chat").GetStream<ChatMessage>(_name);
+
+        LogActivated(nameof(ActiveChatRoomGrain), _name);
+    }
+
+    public async Task Join(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        if (_state.State.Users.TryAdd(user.Name, user))
+        {
+            await _state.WriteStateAsync();
+
+            await _stream.OnNextAsync(new ChatMessage(Guid.Empty, _name, "System", $"{user.Name} joined chat room {_name}"));
+        }
+    }
+
+    public async Task Leave(ChatUser user)
+    {
+        Guard.IsNotNull(user);
+
+        if (_state.State.Users.Remove(user.Name))
+        {
+            await _state.WriteStateAsync();
+
+            await _stream.OnNextAsync(new ChatMessage(Guid.NewGuid(), _name, "System", $"{user.Name} left chat room {_name}"));
+        }
+
+        if (_state.State.Users.Count == 0)
+        {
+            DeactivateOnIdle();
+        }
+    }
+
+    public async Task Message(ChatMessage message)
+    {
+        Guard.IsNotNull(message);
+
+        var saved = await _messageRepository.Save(message);
+
+        _messages.Enqueue(saved);
+
+        if (_messages.Count > _options.MaxCachedMessages)
+        {
+            _messages.Dequeue();
+        }
+
+        await _stream.OnNextAsync(saved);
+    }
+
+    public ValueTask<IEnumerable<ChatMessage>> GetMessages()
+    {
+        return _messages.ToImmutableArray().AsEnumerable().AsValueTaskResult();
+    }
+
+    public ValueTask<IEnumerable<ChatUser>> GetUsers()
+    {
+        return _state.State.Users.Values.ToImmutableArray().AsEnumerable().AsValueTaskResult();
+    }
+
+    public override Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
+    {
+        LogDeactivated(nameof(ActiveChatRoomGrain), _name);
+
+        return Task.CompletedTask;
+    }
+
+    [LoggerMessage(2, LogLevel.Information, "{GrainType} {Key} activated")]
+    private partial void LogActivated(string grainType, string key);
+
+    [LoggerMessage(3, LogLevel.Information, "{GrainType} {Key} deactivated")]
+    private partial void LogDeactivated(string grainType, string key);
+}
+
+#endif
+
 
 
 #if VERSION_10
