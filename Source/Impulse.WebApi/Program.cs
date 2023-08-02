@@ -58,8 +58,7 @@ else
             {
                 options.ClusterId = nameof(Impulse);
                 options.ServiceId = nameof(Impulse);
-            })
-            .AddMemoryStreams("Chat");
+            });
     });
 }
 

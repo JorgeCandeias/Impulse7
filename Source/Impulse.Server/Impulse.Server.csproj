@@ -21,8 +21,8 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
 		<PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="7.2.1" />
 		<PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="7.2.1" />
-		<PackageReference Include="Microsoft.Orleans.Reminders" Version="7.2.1" />
 		<PackageReference Include="Microsoft.Orleans.Reminders.AdoNet" Version="7.2.1" />
+		<PackageReference Include="Microsoft.Orleans.Reminders" Version="7.2.1" />
 		<PackageReference Include="Microsoft.Orleans.Server" Version="7.2.1" />
 		<PackageReference Include="Microsoft.Orleans.Streaming" Version="7.2.1" />
 		<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.5.1" />

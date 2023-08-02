@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="Microsoft.Orleans.Client" Version="7.2.1" />
     <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="7.2.1" />
