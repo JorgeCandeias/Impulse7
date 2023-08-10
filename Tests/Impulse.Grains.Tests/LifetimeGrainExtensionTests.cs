@@ -24,6 +24,7 @@ public class LifetimeGrainExtensionTests
 
         // act
         LifetimeGrainExtensionTestContext.Activated[key] = new();
+
         await grain.AsReference<ILifetimeGrainExtension>().Ping();
 
         // assert
@@ -123,7 +124,7 @@ internal class GrainExtensionTestGrain : Grain, IGrainExtensionTestGrain, IGrain
     {
         var key = this.GetPrimaryKey();
 
-        LifetimeGrainExtensionTestContext.Activated[key].SetResult();
+        LifetimeGrainExtensionTestContext.Activated[key].TrySetResult();
 
         return base.OnActivateAsync(cancellationToken);
     }
@@ -132,7 +133,7 @@ internal class GrainExtensionTestGrain : Grain, IGrainExtensionTestGrain, IGrain
     {
         var key = this.GetPrimaryKey();
 
-        LifetimeGrainExtensionTestContext.Deactivated[key].SetResult();
+        LifetimeGrainExtensionTestContext.Deactivated[key].TrySetResult();
 
         return base.OnDeactivateAsync(reason, cancellationToken);
     }
@@ -141,14 +142,14 @@ internal class GrainExtensionTestGrain : Grain, IGrainExtensionTestGrain, IGrain
     {
         var key = this.GetPrimaryKey();
 
-        LifetimeGrainExtensionTestContext.Dehydrated[key].SetResult();
+        LifetimeGrainExtensionTestContext.Dehydrated[key].TrySetResult();
     }
 
     public void OnRehydrate(IRehydrationContext rehydrationContext)
     {
         var key = this.GetPrimaryKey();
 
-        LifetimeGrainExtensionTestContext.Rehydrated[key].SetResult();
+        LifetimeGrainExtensionTestContext.Rehydrated[key].TrySetResult();
     }
 }
 
