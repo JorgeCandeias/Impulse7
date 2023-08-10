@@ -1,5 +1,7 @@
 using Impulse.Data.InMemory;
 using Microsoft.Extensions.Configuration;
+using Orleans.Runtime;
+using Orleans.Runtime.Placement;
 
 namespace Impulse.Grains.Tests;
 
@@ -29,7 +31,15 @@ public sealed class TestClusterFixture
                 .ConfigureServices(services =>
                 {
                     services.AddInMemoryRepositories();
+
+                    // supports the placement director example
+                    services
+                        .AddSingletonNamedService<PlacementStrategy, ForceMigrationStrategy>(nameof(ForceMigrationStrategy))
+                        .AddSingletonKeyedService<Type, IPlacementDirector, ForceMigrationPlacementDirector>(typeof(ForceMigrationStrategy));
                 });
+
+            siloBuilder
+                .AddGrainExtension<ILifetimeGrainExtension, LifetimeGrainExtension>();
         }
     }
 
