@@ -1,5 +1,6 @@
 ﻿using Impulse.Grains;
 using Impulse.Models;
+using Impulse.Models.Orleans;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -52,6 +53,10 @@ else
 builder.UseOrleansClient(orleans =>
 {
     orleans
+        .UseImpulseClientConnectionRetryFilter(options =>
+        {
+            options.Period = TimeSpan.FromSeconds(1);
+        })
         .AddMemoryStreams("Chat");
 });
 

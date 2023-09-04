@@ -1,5 +1,6 @@
 using Impulse.Data.InMemory;
 using Impulse.Data.SqlServer;
+using Impulse.Models.Orleans;
 using Impulse.WebApi.Middleware;
 using Impulse.WebApi.Models;
 using Orleans.Configuration;
@@ -20,6 +21,10 @@ builder.Services.AddAutoMapper(options =>
 
 builder.Services.AddOrleansClient(orleans =>
 {
+    orleans.UseImpulseClientConnectionRetryFilter(options =>
+    {
+        options.Period = TimeSpan.FromSeconds(1);
+    });
     orleans.AddActivityPropagation();
 });
 

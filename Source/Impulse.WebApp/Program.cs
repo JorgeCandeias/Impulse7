@@ -1,5 +1,6 @@
 using Impulse.Data.InMemory;
 using Impulse.Data.SqlServer;
+using Impulse.Models.Orleans;
 using Impulse.WebApp.Data;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -17,6 +18,10 @@ builder.Environment.EnvironmentName = builder.Configuration["Environment"]!;
 // add services for all environments
 builder.Services.AddOrleansClient(orleans =>
 {
+    orleans.UseImpulseClientConnectionRetryFilter(options =>
+    {
+        options.Period = TimeSpan.FromSeconds(1);
+    });
     orleans.AddMemoryStreams("Chat");
     //orleans.AddActivityPropagation();
 });
