@@ -5,7 +5,7 @@
 /// </summary>
 [Immutable]
 [GenerateSerializer]
-public record ActiveChatRoomStats(
+public sealed record ActiveChatRoomStats(
     [property: Id(1)] string Name,
     [property: Id(2)] int UserCount,
     [property: Id(3)] int MessageCount);

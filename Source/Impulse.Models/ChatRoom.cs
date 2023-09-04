@@ -5,7 +5,7 @@
 /// </summary>
 [Immutable]
 [GenerateSerializer]
-public record ChatRoom(
+public sealed record ChatRoom(
     [property: Id(1)] Guid Guid,
     [property: Id(2)] string Name,
     [property: Id(3)] DateTimeOffset Created = default,

@@ -5,7 +5,7 @@
 /// </summary>
 [Immutable]
 [GenerateSerializer]
-public record ChatMessage(
+public sealed record ChatMessage(
     [property: Id(1)] Guid Guid,
     [property: Id(2)] string Room,
     [property: Id(3)] string User,

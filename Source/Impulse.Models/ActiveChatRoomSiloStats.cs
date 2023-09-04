@@ -5,7 +5,7 @@
 /// </summary>
 [Immutable]
 [GenerateSerializer]
-public record ActiveChatRoomSiloStats(
+public sealed record ActiveChatRoomSiloStats(
     [property: Id(1)] SiloAddress SiloAddress,
     [property: Id(2)] int RoomCount,
     [property: Id(3)] int UserCount,
