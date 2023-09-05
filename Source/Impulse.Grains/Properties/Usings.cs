@@ -12,3 +12,4 @@ global using OrleansDashboard;
 global using System.Collections.Immutable;
 global using System.Diagnostics;
 global using System.Reflection;
+global using System.Text.Json;
